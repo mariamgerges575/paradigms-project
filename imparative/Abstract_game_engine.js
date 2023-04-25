@@ -12,15 +12,18 @@ class Abstract_game_engine {
 
     }
 
-    Initialize() {
+     Initialize() {
         this.Drawer(this.board);
-        while (true) {
+        const loop = () => {
             this.takeUserInput().then(userInput => {
                 this.Controller(userInput);
                 this.Drawer(this.board);
+                loop(); // Call the function again to repeat the loop
             });
-        }
+        };
+        loop(); // Call the function to start the loop
     }
+
 
     // Used in Constructor to create the game initial board (2D array) based on its type
     createBoard() {
@@ -37,7 +40,7 @@ class Abstract_game_engine {
     }
 
     SwitchPlayers(){
-        this.currentPlayer=!this.currentPlayer;
+        this.currentPlayer===1? this.currentPlayer=0:this.currentPlayer=1;
     }
 
 
