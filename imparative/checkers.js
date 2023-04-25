@@ -1,7 +1,9 @@
-import Abstract_game_engine from Abstract_game_engine.js
-class Checkers extends Abstract_game_engine{
+class Checkers{
     map= new Map();
-    
+    toR
+    toC
+    fromR
+    fromC
     constructor(){
         this.board = [
             [-1, 1,-1, 1,-1, 1,-1, 1],
@@ -13,10 +15,24 @@ class Checkers extends Abstract_game_engine{
             [-1, 0,-1, 0,-1, 0,-1, 0],
             [ 0,-1, 0,-1, 0,-1, 0,-1]
         ];
+        // this.board = [
+        //     [2,2,-1,-1,-1,-1,-1,-1],
+        //     [-1,-1,-1,-1,-1,-1,-1,-1],
+        //     [-1,-1,-1,0,-1,-1,-1,-1],
+        //     [-1,-1,-1,-1,-1,-1,-1,-1],
+        //     [-1,-1,-1,-1,-1,-1,-1,-1],
+        //     [-1,-1,-1,-1,-1,-1,-1,-1],
+        //     [-1,-1,-1,-1,-1,-1,-1,-1],
+        //     [ 0,-1, 0,-1, 0,-1, 0,-1]
+        // ];
         this.currentPlayer = 1;
+        this.deads0=4
+        this.deads1=4
         this.map.set(1,'&#9898');
         this.map.set(0, '&#9890');
         console.log("constructor called")
+        this.clicks=0
+        /////////////////////////////////
 
     }
     getInputValue(){
@@ -36,7 +52,22 @@ class Checkers extends Abstract_game_engine{
         console.log(this.board);
 
     }
-
+    clicked() {
+        if (this.clicks%2==0){
+            console.log(0)
+            this.fromR=this.parentNode.rowIndex-1
+            this.fromC=this.cellIndex-1
+        }
+        else{
+            console.log(1)
+            this.toR=this.parentNode.rowIndex-1
+            this.toC=this.cellIndex-1
+        }
+        this.clicks+=1
+        console.log(this.clicks)
+        
+        // alert("clicked cell at: " + this.cellIndex + ", " + this.parentNode.rowIndex);
+    }
     controller(from,to){
         console.log(from)
         console.log(to)
@@ -44,30 +75,71 @@ class Checkers extends Abstract_game_engine{
             alert("invalid input")
             return
         }
-        const fromRow = from[0] - 1;
-        const fromCol = from.charCodeAt(1) - 97;
-        const toRow = to[0] - 1;
-        const toCol = to.charCodeAt(1) - 97;
+        let fromRow = from[0] - 1;
+        let fromCol = from.charCodeAt(1) - 97;
+        let toRow = to[0] - 1;
+        let toCol = to.charCodeAt(1) - 97;
+        ///////////////////////////////////////////
+        // // eb2y emsa7ihhhhhhhhhh
+        // fromRow=this.fromR
+        // fromCol=this.fromC
+        // toRow=this.toR
+        // toCol=this.toC
+        // console.log(toRow)
+        // console.log(toCol)
+        ///////////////////////////////////////////
         if (this.isValidMove(fromRow, fromCol, toRow, toCol)){
-            let hSteps=toRow-fromRow
-            let vSteps=toCol-fromCol
+            let vSteps=toRow-fromRow
+            let hSteps=toCol-fromCol
+            // const piece = this.board[fromRow][fromCol];
+            //check if piece is kinged
+            if((toRow==0 && this.board[fromRow][fromCol]==0 && this.deads0!=0) || (toRow==7 && this.board[fromRow][fromCol]==1 && this.deads1!=0 )){
+                console.log("yessssssssssssss")
+                this.board[fromRow][fromCol]+=2
+                if (this.currentPlayer)
+                    this.deads1-=1
+                else
+                    this.deads0-=1
+            }
+            else{
+                console.log(toRow)
+                console.log(this.board[fromRow][fromCol])
+                console.log(this.deads0)
+                console.log(this.deads1)
+                console.log("noooooooooooooo")
+            }
+            //move your piece
             this.applyMove(fromRow, fromCol, toRow, toCol)
+            //elmafrod lw wasal akhalih kinggg 
+            
+            
             //keda keda 7n apply move
             //lw wasal l akher row 7n7wlo l kinged awel wa7ed mbyb2ash kinged!!!!
             //case 1 step 7n apply move bs 
+            //if move was a jump then kill the opponent you jumped over and check if there is any possible jumps
             if (Math.abs(hSteps)==2){
                 //khlet ely felnos ytakel
-                this.board[fromRow+(hSteps/2)][fromCol+(vSteps/2)]=-1
+                this.board[fromRow+(vSteps/2)][fromCol+(hSteps/2)]=-1
+                const {bool,jumpMoves}=this.getJumpingMoves()
+                if (this.currentPlayer)
+                    this.deads0++
+                else
+                    this.deads1++
+                if(!bool)
+                    this.switchTurn()
+                
+                //7ykmel le3b fy 7alet en fy jump availableeeeeeeeeeeeee m7taga a check bs lw fy w adelo hwa ydkhal w lw mdkhlsh ely hwa 3yza
             
             }
-            else{
+            else
                 this.switchTurn()
-            }
+            
             this.drawer(this.board)
         }
         
       
     }
+    
     switchTurn(){
         this.currentPlayer=!(this.currentPlayer)
         
@@ -76,8 +148,11 @@ class Checkers extends Abstract_game_engine{
         //return true if both lengths are 2
         return (from.length!=2 || to.length!=2)
     }
-    isCurrentPlayer(piece,currentPlayer){ //3ksaha isEnemy
-       return ((piece%2) === currentPlayer) 
+    isCurrentPlayer(piece){ //3ksaha isEnemy
+        console.log(piece%2)
+        console.log(this.currentPlayer)
+        console.log((piece%2) == this.currentPlayer)
+       return ((piece%2) == this.currentPlayer) 
     
     }
     isCellInBounds(row, col) {
@@ -87,31 +162,64 @@ class Checkers extends Abstract_game_engine{
 
 
     }
-    getJumpingMoves(){
-        //3yzaha trg3 boolean lw fy jumping move w lw feh trg3hom kolohom 
-        let jumpMoves;
-        let start,end,value;
-        // if (this.currentPlayer==0){
-        //     start=this.board.length-1
-        //     end=0
-        //     value=-1
-        // }
-        // else{
-        //     start=0
-        //     end=this.board[0].length
-        // }
-        for (let i = start ; i >=end; i+=value){
-            for (let j=0;j<this.board[0].length;j++){
-                let currPiece=this.board[i][j]
-                if (this.isCurrentPlayer(currPiece,this.currentPlayer)){
-                    if (currPiece>1){
-                        //m7taga a check ely 3ksyyyyy
-
-                    }
-                }
-            }
+    isJump(i_2,j_2,i_1,j_1){
+        
+        let DDP=this.board[i_2][j_2]
+        if (DDP==-1){
+            let DP=this.board[i_1][j_1]
+            if (DP==-1)
+                return false
+            return (!this.isCurrentPlayer(DP))
         }
-        return ;
+        return false
+    }
+    getJumpingMoves(){
+        //return a boolean(true if there is a possible jump and false otherwise)
+        let jumpMoves=[];        
+        let start=0,count=0
+        if (this.currentPlayer==0){
+            start=-7
+        }
+        for (let i = start ; i <start+8; i++){
+            for (let j=0;j<8;j++){
+
+                let currPiece=this.board[Math.abs(i)][j]
+                if (this.isCurrentPlayer(currPiece)){
+                    count++
+                    if (j>1){/////check leftttt
+                        if (i<6){
+                            if (this.isJump(Math.abs(i+2),j-2,Math.abs(i+1),j-1))
+                                jumpMoves.push([Math.abs(i),j,Math.abs(i+2),j-2])
+                        }
+                        if (currPiece>1){
+                            if (i>1){
+                                if (this.isJump(Math.abs(i-2),j-2,Math.abs(i-1),j-1))
+                                    jumpMoves.push([Math.abs(i),j,Math.abs(i-2),j-2])
+                            }
+                        }
+                    }            
+                    if(j<6){//checkkk right
+                        if (i<6){
+                            if (this.isJump(Math.abs(i+2),j+2,Math.abs(i+1),j+1))
+                            jumpMoves.push([Math.abs(i),j,Math.abs(i+2),j+2])
+                        }
+                        if (currPiece>1){
+                            if (i>1){
+                                if (this.isJump(Math.abs(i-2),j-2,Math.abs(i-1),j+1))
+                                jumpMoves.push([Math.abs(i),j,Math.abs(i-2),j-2])
+                            }
+                            
+                        }       
+                    }
+                }     
+            }
+            
+            if (count==12)
+                break
+            
+        }
+        let bool=jumpMoves.length==0?false:true
+        return {bool,jumpMoves};
     }
     isValidMove(fromRow, fromCol, toRow, toCol) {
         
@@ -130,14 +238,14 @@ class Checkers extends Abstract_game_engine{
         }
         ///////////////m7taga ageb el available jump movessss w ashof lw how mesh ray7 lw7da menhaaaaa
         // Check if the piece belongs to the current player
-        if (!this.isCurrentPlayer(piece,this.currentPlayer)) {
+        if (!this.isCurrentPlayer(piece)) {
             console.log("not your piece!");
             return false;
         }
 
         // Check if the destination cell is not occupied
         //logic related to checkerssssssss
-        if ((this.board[toRow][toCol]) !== -1) {
+        if ((this.board[toRow][toCol]) != -1) {
             console.log("not empty place");
             return false;
         }
@@ -147,7 +255,7 @@ class Checkers extends Abstract_game_engine{
         // lw 2 steps fel diagonal lazem ely fel nos ykon  lon mokhtalef
         let vSteps=toRow-fromRow
         let hSteps=toCol-fromCol
-        if (Math.abs(hSteps)>2 || Math.abs(vSteps)>2 || Math.abs(hSteps)!==Math.abs(vSteps)){
+        if (Math.abs(hSteps)>2 || Math.abs(vSteps)>2 || Math.abs(hSteps)!=Math.abs(vSteps)){
             console.log("step>2 or not moving in diagonal")
             return false
         }
@@ -155,13 +263,23 @@ class Checkers extends Abstract_game_engine{
             console.log("unkinged moving backward!!")
             return false
         }
+        
         if (Math.abs(hSteps)==2){
             //3yzen n-check en ely mabenhom bta3et el 3dw
-            let inBetweenPiece=this.board[fromRow+(hSteps/2)][fromCol+(vSteps/2)];
-            if (this.isCurrentPlayer(inBetweenPiece,this.currentPlayer)){
+            let inBetweenPiece=this.board[fromRow+(vSteps/2)][fromCol+(hSteps/2)];
+            if (this.isCurrentPlayer(inBetweenPiece)){
                 console.log("7t2tel nfsk")
                 return false
             }
+            
+        }
+        if (Math.abs(hSteps)==1){
+            //7shofffff lw kan fy step b 2 w hwa m3mlhashhhhhh
+            // let bool,jumpMoves=[[]]
+            const {bool,jumpMoves}=this.getJumpingMoves()
+            console.log(bool)
+            console.log(jumpMoves)
+            return !bool
             
         }
         return true;
@@ -196,6 +314,7 @@ class Checkers extends Abstract_game_engine{
             let ascii=i+97
             ascii='&#0'+ascii
             cell.innerHTML=ascii
+            
             row.appendChild(cell);
         }
         
@@ -217,14 +336,17 @@ class Checkers extends Abstract_game_engine{
                     cell.style.backgroundColor='#000';
      
                 if (state[i][j]==1)//black player
-                    cell.innerHTML='&#9899'
+                    cell.innerHTML= '&#9899'
                 else if (state[i][j]==0) //white player
                     cell.innerHTML='&#9898'
                 else if(state[i][j]==3)//black player kinged
                     cell.innerHTML='&#9818'
-                else if (state[i][j]==2) //white player kinged
+                else if (state[i][j]==2){ //white player kinged
                     cell.innerHTML='&#9812'
-
+                    console.log("kingg walahyyy")
+                }
+                    
+                // cell.addEventListener("mouseup",this.clicked)
                 row.appendChild(cell);
                 
             }
