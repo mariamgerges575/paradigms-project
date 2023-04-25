@@ -1,77 +1,64 @@
 class Abstract_game_engine {
+
     constructor() {
         if (new.target === Abstract_game_engine) {
             throw new TypeError("Cannot construct Abstract instances directly");
         }
+
         this.board = this.createBoard();
+        this.row=this.board.length;
+        this.col=this.board[0].length;
+        this.currentPlayer=1;
 
     }
 
-
-   // Drawer Functions
-    Draw(gameState) {
-        throw new Error("Draw method must be implemented");
+    Initialize() {
+        this.Drawer(this.board);
+        while (true) {
+            this.takeUserInput().then(userInput => {
+                this.Controller(userInput);
+                this.Drawer(this.board);
+            });
+        }
     }
-    getPieceASCII(piece) {
-        throw new Error("getPieceASCII method must be implemented");
-    }
-
 
     // Used in Constructor to create the game initial board (2D array) based on its type
     createBoard() {
         throw new Error("createBoard method must be implemented");
     }
-
-
-    //Controller functions
-
-    // Read user Input from textBox
+    Drawer(gameState) {
+        throw new Error("Drawer method must be implemented");
+    }
     takeUserInput() {
         throw new Error("takeUserInput method must be implemented");
     }
-    // first function in the controller which tries to make the move and applies it if possible
-    // Calls takeUserInput() then validates input using isValidMove() and finally calls applyMove(move) to change state
-    makeMove() {
-        throw new Error("makeMove method must be implemented");
+    Controller(Input) {
+        throw new Error("Controller method must be implemented");
     }
-    isValidMove(move) {
-        throw new Error("isValidMove method must be implemented");
+
+    SwitchPlayers(){
+        this.currentPlayer=!this.currentPlayer;
     }
-    //helper function for isValidMove()
+
+
+
+    FindRowCol(Input){
+        const Row = parseInt(Input[0]) - 1;
+        const Col = Input.charCodeAt(1) - 97;
+
+        return {Row,Col};
+
+    }
+    isValidLength(Input,expectedLength){
+        return Input.length === expectedLength;
+    }
+
+
     isCellInBounds(row, col) {
-        throw new Error("isCellInBounds method must be implemented");
-    }
-    // Change the game state
-    // takes object move which contains the data for a specific game move as parameter
-    // example : chess-> move{fromRow, fromCol,toRow,toCol}
-    // example : sudoko-> move{number,toRow,toCol}
-    applyMove(move) {
-        throw new Error("applyMove method must be implemented");
+        return row >= 0 && row < this.row && col >= 0 && col < this.col;
     }
 
 
 
 
-
-    //TODO
-    // start() {
-    //     throw new Error("start method must be implemented");
-    // }
-    // SOME GAMES HAVE 1 PLAYER ONLY
-    // switchTurn() {
-    //     throw new Error("switchTurn method must be implemented");
-    // }
-    // SUDOKO AND XO DO NOT NEED getPiecColor()
-    // SUGGESTED SOLUTION : CHANGE IT TO getPieceInfo() TO BE MORE GENERAL AND RETURN THE NEEDED INFO BASED ON THE GAME
-    // RETURN TYPE WOULD BE AN OBJECT PIECE{color,text,etc}
-    // getPieceColor(piece) {
-    //     throw new Error("getPieceColor method must be implemented");
-    // }
-    // New method to get the game state
-    // getGameState() {
-    //     return {
-    //         board: this.board,
-    //         currentPlayer: this.currentPlayer
-    //     };
-    // }
 }
