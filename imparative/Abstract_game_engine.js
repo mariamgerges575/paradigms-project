@@ -47,7 +47,7 @@ class Abstract_game_engine {
 
     FindRowCol(Input){
         const Row = parseInt(Input[0]) - 1;
-        const Col = Input.charCodeAt(1) - 97;
+        const Col = Input.toLowerCase().charCodeAt(1) - 97;
 
         return {Row,Col};
 

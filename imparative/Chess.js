@@ -14,29 +14,31 @@ class Chess extends Abstract_game_engine{
         tbl.setAttribute("id","tablee");
         const tblBody = document.createElement("tbody");
         console.log(state)
-        let col_letter="a";
-        let row_num=1;
-        for (let i = -1; i < state.length; i++) {
 
+        let row_num=-1;
+        for (let i = -1; i < state.length+1; i++) {
+            row_num=row_num+1;
+            let col_letter="A";
             const row = document.createElement("tr");
-            for (let j = -1; j < state[0].length; j++) {
+            for (let j = -1; j < state[0].length+1; j++) {
 
 
                 const cell = document.createElement("td");
                 cell.style='height:80px;width:80px;margin:1px;background-color: white;vertical-align: middle;text-align:center;font-size: 50px;box-shadow: #000;';
 
-                if(i===-1 && j!==-1){
+                if((i===-1||i===state.length) && (j!==-1&&j!==state.length)){
                     cell.innerHTML=col_letter;
                     cell.style.backgroundColor = 'white';
                     col_letter=String.fromCharCode(col_letter.charCodeAt(0)+1)
+                    cell.style.fontFamily='Copperplate';
                 }
-                if(i!==-1&& j===-1){
+                if((i!==-1&&i!==state.length)&& (j===-1||j=== state.length)){
                     cell.innerHTML=row_num.toString();
                     cell.style.backgroundColor = 'white';
-                    row_num=row_num+1;
+                    cell.style.fontFamily='Copperplate';
                 }
 
-                else if(j!==-1&& i!==-1) {
+                else if(j!==-1&& i!==-1 && j!==state.length&& i!== state.length) {
                     if (!(i % 2 == 1 ^ j % 2 == 0)) {
                         cell.style.backgroundColor = '#aaaaaa';
 
