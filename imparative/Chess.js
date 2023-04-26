@@ -9,6 +9,7 @@ class Chess extends Abstract_game_engine{
         const to_be_del=document.getElementById("tablee")
         if (to_be_del!=null){
             to_be_del.remove()
+            console.log("sssss");
         }
         const tbl = document.createElement("table");
         tbl.setAttribute("id","tablee");
