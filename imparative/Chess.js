@@ -1,45 +1,37 @@
-class Chess extends Abstract_game_engine{
+import {Abstract_game_engine} from "./Abstract_game_engine.js"
+export class Chess extends Abstract_game_engine{
     constructor() {
        super();
-
     }
-
 
     Drawer(state){
         const to_be_del=document.getElementById("tablee")
         if (to_be_del!=null){
             to_be_del.remove()
-            console.log("sssss");
         }
         const tbl = document.createElement("table");
         tbl.setAttribute("id","tablee");
         const tblBody = document.createElement("tbody");
         console.log(state)
-
-        let row_num=-1;
-        for (let i = -1; i < state.length+1; i++) {
-            row_num=row_num+1;
-            let col_letter="A";
+        let col_letter="a";
+        let row_num=1;
+        for (let i = -1; i < state.length; i++) {
             const row = document.createElement("tr");
-            for (let j = -1; j < state[0].length+1; j++) {
-
-
+            for (let j = -1; j < state[0].length; j++) {
                 const cell = document.createElement("td");
-                cell.style='height:80px;width:80px;margin:1px;background-color: white;vertical-align: middle;text-align:center;font-size: 50px;box-shadow: #000;';
-
-                if((i===-1||i===state.length) && (j!==-1&&j!==state.length)){
+                cell.style='height:60px;width:60px;margin:1px;background-color: white;vertical-align: middle;text-align:center;font-size: 50px;box-shadow: #000;';
+                if(i===-1 && j!==-1){
                     cell.innerHTML=col_letter;
                     cell.style.backgroundColor = 'white';
                     col_letter=String.fromCharCode(col_letter.charCodeAt(0)+1)
-                    cell.style.fontFamily='Copperplate';
                 }
-                if((i!==-1&&i!==state.length)&& (j===-1||j=== state.length)){
+                if(i!==-1&& j===-1){
                     cell.innerHTML=row_num.toString();
                     cell.style.backgroundColor = 'white';
-                    cell.style.fontFamily='Copperplate';
+                    row_num=row_num+1;
                 }
 
-                else if(j!==-1&& i!==-1 && j!==state.length&& i!== state.length) {
+                else if(j!==-1&& i!==-1) {
                     if (!(i % 2 == 1 ^ j % 2 == 0)) {
                         cell.style.backgroundColor = '#aaaaaa';
 
@@ -61,9 +53,7 @@ class Chess extends Abstract_game_engine{
         }
         tbl.appendChild(tblBody);
 
-        if(this.currentPlayer===1){
-        document.getElementById("turn").innerHTML="White Player Turn";}
-        else {document.getElementById("turn").innerHTML="Black Player Turn";}
+       
 
         document.body.appendChild(tbl);
 
@@ -170,33 +160,21 @@ class Chess extends Abstract_game_engine{
     }
 
 
-    takeUserInput() {
-        return new Promise(resolve => {
-            const Input1 = document.getElementById("from");
-            const Input2 = document.getElementById('to');
-            const applyButton = document.getElementById("Move");
-            applyButton.addEventListener("click", () => {
-                const fromCell = Input1.value;
-                const toCell = Input2.value;
-                const userInput={fromCell,toCell};
-                resolve(userInput);
-            });
-        });
+    takeUserInput(){
+       this.takeUserInput2();
     }
-    ClearInput(){
-        document.getElementById('from').value='';
-        document.getElementById('to').value='';
-    }
-    Controller(userInput) {
+    
+    Controller(fromCell,toCell) {
         // Get the user input for the move
 
-        this.ClearInput();
+        this.ClearInput('firstInput');
+        this.ClearInput('secondInput');
         // Convert the user input to the corresponding row and column indices
-        let fromMove = this.FindRowCol(userInput.fromCell);
+        let fromMove = this.FindRowCol(fromCell);
         let fromRow=fromMove.Row;
         let fromCol=fromMove.Col;
 
-        let toMove = this.FindRowCol(userInput.toCell);
+        let toMove = this.FindRowCol(toCell);
         let toRow=toMove.Row;
         let toCol=toMove.Col;
 
@@ -205,20 +183,22 @@ class Chess extends Abstract_game_engine{
 
 
         // Check if the move is valid
-        if ( this.isValidLength(userInput.fromCell,2)&& this.isValidLength(userInput.toCell,2)&&this.isValidMove({ fromRow, fromCol, toRow, toCol })) {
+        if ( this.isValidLength(fromCell,2)&& this.isValidLength(toCell,2)&&this.isValidMove({ fromRow, fromCol, toRow, toCol })) {
             // Apply the move to the this state
             this.applyMove({ fromRow, fromCol, toRow, toCol })
             this.SwitchPlayers();
-
+            
             // Return the updated this state
-            return ;
+          
         } else {
             // If the move is not valid, throw an error or return null
             alert("Invalid move");
-            return;
+        
+
             // or return null
             // return null;
         }
+        this.Drawer(this.board);
     }
 
     // Helper functions for checking piece color and checking if a cell is within bounds

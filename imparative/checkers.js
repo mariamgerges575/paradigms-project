@@ -1,11 +1,14 @@
-class Checkers{
-    map= new Map();
-    toR
-    toC
-    fromR
-    fromC
+import {Abstract_game_engine} from "./Abstract_game_engine.js"
+export class Checkers extends Abstract_game_engine{
+   
     constructor(){
-        this.board = [
+       super();
+        this.deads0=0
+        this.deads1=0
+    }
+////////////////////////////////////////////////////////////////////////////////
+    createBoard(){
+        let  state=[
             [-1, 1,-1, 1,-1, 1,-1, 1],
             [ 1,-1, 1,-1, 1,-1, 1,-1],
             [-1, 1,-1, 1,-1, 1,-1, 1],
@@ -14,35 +17,14 @@ class Checkers{
             [ 0,-1, 0,-1, 0,-1, 0,-1],
             [-1, 0,-1, 0,-1, 0,-1, 0],
             [ 0,-1, 0,-1, 0,-1, 0,-1]
-        ];
-        // this.board = [
-        //     [2,2,-1,-1,-1,-1,-1,-1],
-        //     [-1,-1,-1,-1,-1,-1,-1,-1],
-        //     [-1,-1,-1,0,-1,-1,-1,-1],
-        //     [-1,-1,-1,-1,-1,-1,-1,-1],
-        //     [-1,-1,-1,-1,-1,-1,-1,-1],
-        //     [-1,-1,-1,-1,-1,-1,-1,-1],
-        //     [-1,-1,-1,-1,-1,-1,-1,-1],
-        //     [ 0,-1, 0,-1, 0,-1, 0,-1]
-        // ];
-        this.currentPlayer = 1;
-        this.deads0=4
-        this.deads1=4
-        this.map.set(1,'&#9898');
-        this.map.set(0, '&#9890');
-        console.log("constructor called")
-        this.clicks=0
-        /////////////////////////////////
-
+         ];
+         return state;
+     }
+////////////////////////////////////////////////////////////////////////////////
+    takeUserInput(){
+         this.takeUserInput2();
     }
-    getInputValue(){
-        let input1 = document.getElementById("firstInput").value;
-        let input2= document.getElementById("secondInput").value;
-        this.controller(input1,input2)
-    }
-    draw(){
-        this.drawer(this.board);
-    }
+//////////////////////////////////////////////////////////////////////////////
     applyMove(fromRow, fromCol, toRow, toCol) {
        ///es2ly nagui em 3yzen nkhleha btbadel bssssssssss
 
@@ -52,47 +34,26 @@ class Checkers{
         console.log(this.board);
 
     }
-    clicked() {
-        if (this.clicks%2==0){
-            console.log(0)
-            this.fromR=this.parentNode.rowIndex-1
-            this.fromC=this.cellIndex-1
-        }
-        else{
-            console.log(1)
-            this.toR=this.parentNode.rowIndex-1
-            this.toC=this.cellIndex-1
-        }
-        this.clicks+=1
-        console.log(this.clicks)
-        
-        // alert("clicked cell at: " + this.cellIndex + ", " + this.parentNode.rowIndex);
-    }
-    controller(from,to){
+//////////////////////////////////////////////////////////////////
+    Controller(from,to){
+        this.ClearInput("firstInput");
+        this.ClearInput("secondInput");
         console.log(from)
         console.log(to)
-        if (this.isNotValidLength(from,to)){
+        if (!this.isValidLength(from,2)|| !this.isValidLength(to,2)){
             alert("invalid input")
             return
         }
-        let fromRow = from[0] - 1;
-        let fromCol = from.charCodeAt(1) - 97;
-        let toRow = to[0] - 1;
-        let toCol = to.charCodeAt(1) - 97;
-        ///////////////////////////////////////////
-        // // eb2y emsa7ihhhhhhhhhh
-        // fromRow=this.fromR
-        // fromCol=this.fromC
-        // toRow=this.toR
-        // toCol=this.toC
-        // console.log(toRow)
-        // console.log(toCol)
-        ///////////////////////////////////////////
+        const r=this.FindRowCol(from);
+        let fromRow=r.Row
+        let fromCol=r.Col;
+        const c=this.FindRowCol(to);
+        let toRow=c.Row
+        let toCol=c.Col;
+        
         if (this.isValidMove(fromRow, fromCol, toRow, toCol)){
             let vSteps=toRow-fromRow
             let hSteps=toCol-fromCol
-            // const piece = this.board[fromRow][fromCol];
-            //check if piece is kinged
             if((toRow==0 && this.board[fromRow][fromCol]==0 && this.deads0!=0) || (toRow==7 && this.board[fromRow][fromCol]==1 && this.deads1!=0 )){
                 console.log("yessssssssssssss")
                 this.board[fromRow][fromCol]+=2
@@ -108,17 +69,8 @@ class Checkers{
                 console.log(this.deads1)
                 console.log("noooooooooooooo")
             }
-            //move your piece
             this.applyMove(fromRow, fromCol, toRow, toCol)
-            //elmafrod lw wasal akhalih kinggg 
-            
-            
-            //keda keda 7n apply move
-            //lw wasal l akher row 7n7wlo l kinged awel wa7ed mbyb2ash kinged!!!!
-            //case 1 step 7n apply move bs 
-            //if move was a jump then kill the opponent you jumped over and check if there is any possible jumps
             if (Math.abs(hSteps)==2){
-                //khlet ely felnos ytakel
                 this.board[fromRow+(vSteps/2)][fromCol+(hSteps/2)]=-1
                 const {bool,jumpMoves}=this.getJumpingMoves()
                 if (this.currentPlayer)
@@ -126,42 +78,19 @@ class Checkers{
                 else
                     this.deads1++
                 if(!bool)
-                    this.switchTurn()
-                
-                //7ykmel le3b fy 7alet en fy jump availableeeeeeeeeeeeee m7taga a check bs lw fy w adelo hwa ydkhal w lw mdkhlsh ely hwa 3yza
-            
+                    this. SwitchPlayers()
             }
             else
-                this.switchTurn()
+                this. SwitchPlayers()
             
-            this.drawer(this.board)
+            this.Drawer(this.board)
         }
-        
-      
     }
     
-    switchTurn(){
-        this.currentPlayer=!(this.currentPlayer)
-        
-    }
-    isNotValidLength(from,to){
-        //return true if both lengths are 2
-        return (from.length!=2 || to.length!=2)
-    }
     isCurrentPlayer(piece){ //3ksaha isEnemy
-        console.log(piece%2)
-        console.log(this.currentPlayer)
-        console.log((piece%2) == this.currentPlayer)
        return ((piece%2) == this.currentPlayer) 
-    
     }
-    isCellInBounds(row, col) {
-        return row >= 0 && row < this.board.length && col >= 0 && col < this.board[0].length;
-    }
-    isValidCheckersMove(fromRow, fromCol, toRow, toCol){
-
-
-    }
+   
     isJump(i_2,j_2,i_1,j_1){
         
         let DDP=this.board[i_2][j_2]
@@ -214,23 +143,24 @@ class Checkers{
                 }     
             }
             
-            if (count==12)
+            if (count==12) ///count -deadssssssssssssssssssssssssssssssssss
                 break
             
         }
         let bool=jumpMoves.length==0?false:true
         return {bool,jumpMoves};
     }
+/////////////////////////////////////////////////////////////////////////////////
     isValidMove(fromRow, fromCol, toRow, toCol) {
         
-        console.log(this.board);
+        // console.log(this.board);
         const piece = this.board[fromRow][fromCol];
-        console.log(fromRow);
-        console.log(fromCol);
-        console.log(toRow);
-        console.log(toCol);
-        console.log(this.currentPlayer);
-        console.log(this.board)
+        // console.log(fromRow);
+        // console.log(fromCol);
+        // console.log(toRow);
+        // console.log(toCol);
+        // console.log(this.currentPlayer);
+        // console.log(this.board)
         //check if input is within bounds
         if( !(this.isCellInBounds(fromRow,fromCol)&& this.isCellInBounds(toRow,toCol))){
             console.log("out of bounds");
@@ -289,7 +219,8 @@ class Checkers{
     }
     
 
-    drawer(state){
+    Drawer(state){
+        // document.remove()
         const to_be_del=document.getElementById("tablee")
         if (to_be_del!=null){
             to_be_del.remove()
@@ -298,7 +229,7 @@ class Checkers{
         if (this.currentPlayer%2==1){
             player="black's player turn"
         }
-        document.getElementById('turn').innerText=player+" Player Turn";
+        // document.getElementById('turn').innerText=player+" Player Turn";
         const tbl = document.createElement("table");
         tbl.setAttribute("id","tablee");
         const tblBody = document.createElement("tbody");
@@ -333,7 +264,10 @@ class Checkers{
                 cell.style='height:60px;width:60px;margin:0;vertical-align: middle;text-align:center;font-size: 42px;box-shadow: #000;border-style:solid';
               
                 if (!(i%2==1 ^ j%2==0 ))
-                    cell.style.backgroundColor='#000';
+                    cell.style.backgroundColor='#762209';
+                    else 
+                    cell.style.backgroundColor=' #daa061';
+                   
      
                 if (state[i][j]==1)//black player
                     cell.innerHTML= '&#9899'
@@ -359,5 +293,5 @@ class Checkers{
     
     }
 }
-const checkers =new Checkers();
-checkers.drawer(checkers.board);
+// const checkers =new Checkers();
+// checkers.drawer(checkers.board);

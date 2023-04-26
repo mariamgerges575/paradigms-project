@@ -1,0 +1,50 @@
+import { Abstract_game_engine } from "./Abstract_game_engine.js";
+import {eightQueens} from "./eightqueens.js"
+import { tic_tac_toe } from "./tic-tac-toe.js";
+import { Checkers } from "./checkers.js";
+import { Chess } from "./Chess.js";
+// console.log(localStorage.getItem("choose"));
+var gamee;
+var butt=document.getElementById("but");
+switch(localStorage.getItem("choose"))
+{
+  
+    case 'eightqueens':
+    {
+    gamee=new eightQueens ();
+     break;
+    }
+    case 'sudoku':
+    {
+        gamee=new eightQueens ();
+        break;
+    }
+    case 'checkers':
+    {
+        gamee=new Checkers ();
+        break;
+    }
+    case 'connect4':
+    {
+        gamee=new eightQueens ();
+        break;
+    }
+    case 'tictactoe':
+    {
+        gamee=new tic_tac_toe();
+        console.log("hoho");
+
+        break;
+    }
+    case 'chess':
+    {
+        gamee=new Chess ();
+        break;
+    }
+
+}
+console.log(localStorage.getItem("choose"));
+    gamee.Initialize();
+    // butt.addEventListener("click",gamee.takeUserInput)  ;
+    butt.addEventListener("click",function(){
+    gamee.takeUserInput()});
