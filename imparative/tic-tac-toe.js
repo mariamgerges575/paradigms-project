@@ -43,6 +43,7 @@ export class tic_tac_toe extends Abstract_game_engine {
             let ascii=i+97
             ascii='&#0'+ascii
             cell.innerHTML=ascii
+            cell.style.fontFamily="Copperplate";
             row.appendChild(cell);
         }
         tblBody.appendChild(row);
@@ -52,6 +53,7 @@ export class tic_tac_toe extends Abstract_game_engine {
             const cell=document.createElement("td");
             cell.style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #000;background-color:#e0e0d8';
             cell.innerHTML=i+1;
+            cell.style.fontFamily="Copperplate";
             row.appendChild(cell);
             for (let j = 0; j < state[0].length; j++) { 
                 const cell = document.createElement("td");
@@ -71,7 +73,13 @@ export class tic_tac_toe extends Abstract_game_engine {
             }
             tblBody.appendChild(row);    
         }
-        tbl.appendChild(tblBody);// append table body to table nfso 
+        tbl.appendChild(tblBody);// append table body to table nfso
+        document.getElementById("label1").innerHTML="To Cell :"
+
+        if (this.currentPlayer==1){
+            document.getElementById("turn").innerHTML=" Player X Turn";
+        }
+        else { document.getElementById("turn").innerHTML=" Player O Turn";}
         document.body.appendChild(tbl); // b append kol dah lel document 
         tbl.style="border-style:solid;border-color:#000;border:10";
     }

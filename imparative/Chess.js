@@ -13,7 +13,7 @@ export class Chess extends Abstract_game_engine{
         tbl.setAttribute("id","tablee");
         const tblBody = document.createElement("tbody");
         console.log(state)
-        let col_letter="a";
+        let col_letter="A";
         let row_num=1;
         for (let i = -1; i < state.length; i++) {
             const row = document.createElement("tr");
@@ -24,11 +24,15 @@ export class Chess extends Abstract_game_engine{
                     cell.innerHTML=col_letter;
                     cell.style.backgroundColor = 'white';
                     col_letter=String.fromCharCode(col_letter.charCodeAt(0)+1)
+                    cell.style.fontFamily="Copperplate";
+                    cell.style.fontSize="40px";
                 }
                 if(i!==-1&& j===-1){
                     cell.innerHTML=row_num.toString();
                     cell.style.backgroundColor = 'white';
+                    cell.style.fontFamily="Copperplate";
                     row_num=row_num+1;
+                    cell.style.fontSize="40px";
                 }
 
                 else if(j!==-1&& i!==-1) {
@@ -52,8 +56,13 @@ export class Chess extends Abstract_game_engine{
             tblBody.appendChild(row);
         }
         tbl.appendChild(tblBody);
+        document.getElementById("label1").innerHTML="From Cell :"
+        document.getElementById("label2").innerHTML="To   Cell :"
+        if (this.currentPlayer==1){
+            document.getElementById("turn").innerHTML="WHITE Player Turn";
+        }
+        else { document.getElementById("turn").innerHTML="BLACK Player Turn";}
 
-       
 
         document.body.appendChild(tbl);
 
@@ -98,7 +107,7 @@ export class Chess extends Abstract_game_engine{
             return false
         }
         // Check if the piece belongs to the current player
-        if (this.getPieceColor(piece) !== this.currentPlayer) {
+        if (this.getPieceColor(piece) != this.currentPlayer) {
             console.log("e1");
             console.log(this.getPieceColor(piece));
             console.log(this.currentPlayer);

@@ -85,6 +85,7 @@ export class Checkers extends Abstract_game_engine{
             
             this.Drawer(this.board)
         }
+        else {alert("Invalid Input")}
     }
     
     isCurrentPlayer(piece){ //3ksaha isEnemy
@@ -245,6 +246,7 @@ export class Checkers extends Abstract_game_engine{
             let ascii=i+97
             ascii='&#0'+ascii
             cell.innerHTML=ascii
+            cell.style.fontFamily="Copperplate";
             
             row.appendChild(cell);
         }
@@ -257,6 +259,7 @@ export class Checkers extends Abstract_game_engine{
             // first cell (numbers)
             cell.style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 30px;box-shadow: #000;background-color:#e0e0d8';
             cell.innerText=i+1
+            cell.style.fontFamily="Copperplate";
             row.appendChild(cell);
             for (let j = 0; j < state[0].length; j++) {  
 
@@ -287,7 +290,14 @@ export class Checkers extends Abstract_game_engine{
             row.style="border:5;border-style:solid"
             tblBody.appendChild(row);
         }
+
         tbl.appendChild(tblBody);
+        document.getElementById("label1").innerHTML="From Cell :"
+        document.getElementById("label2").innerHTML="To   Cell :"
+        if (this.currentPlayer==0){
+            document.getElementById("turn").innerHTML="WHITE Player Turn";
+        }
+        else { document.getElementById("turn").innerHTML="BLACK Player Turn";}
         document.body.appendChild(tbl);
         tbl.style="border-style:solid;border:2;border-collapse: collapse;"
     
