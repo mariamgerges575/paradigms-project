@@ -370,8 +370,8 @@ export class Chess extends Abstract_game_engine{
         if (Math.abs(toRow - fromRow) <= 1 && Math.abs(toCol - fromCol) <= 1) {
             return true;} } }
 
-const chessGame=new Chess();
+// const chessGame=new Chess();
 // console.log(chessGame.board);
 // console.log(chessGame.currentPlayer);
-chessGame.Initialize();
+// chessGame.Initialize();
 // document.getElementById("Move").addEventListener("click",chessGame.makeMove)

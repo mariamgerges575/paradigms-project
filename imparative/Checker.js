@@ -6,6 +6,7 @@ export class Checkers extends Abstract_game_engine{
         this.deads0=0
         this.deads1=0
     }
+   
 ////////////////////////////////////////////////////////////////////////////////
     createBoard(){
         let  state=[
@@ -18,6 +19,8 @@ export class Checkers extends Abstract_game_engine{
             [-1, 0,-1, 0,-1, 0,-1, 0],
             [ 0,-1, 0,-1, 0,-1, 0,-1]
          ];
+         
+         
          return state;
      }
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,20 +58,15 @@ export class Checkers extends Abstract_game_engine{
             let vSteps=toRow-fromRow
             let hSteps=toCol-fromCol
             if((toRow==0 && this.board[fromRow][fromCol]==0 && this.deads0!=0) || (toRow==7 && this.board[fromRow][fromCol]==1 && this.deads1!=0 )){
-                console.log("yessssssssssssss")
+                //check if a piece reached the last row -> king
+                console.log("kinged")
                 this.board[fromRow][fromCol]+=2
                 if (this.currentPlayer)
                     this.deads1-=1
                 else
                     this.deads0-=1
             }
-            else{
-                console.log(toRow)
-                console.log(this.board[fromRow][fromCol])
-                console.log(this.deads0)
-                console.log(this.deads1)
-                console.log("noooooooooooooo")
-            }
+            
             this.applyMove(fromRow, fromCol, toRow, toCol)
             if (Math.abs(hSteps)==2){
                 this.board[fromRow+(vSteps/2)][fromCol+(hSteps/2)]=-1
@@ -88,12 +86,13 @@ export class Checkers extends Abstract_game_engine{
         else {alert("Invalid Input")}
     }
     
-    isCurrentPlayer(piece){ //3ksaha isEnemy
+    isCurrentPlayer(piece){ 
+    //returns true if the piece belongs to the current player
        return ((piece%2) == this.currentPlayer) 
     }
    
     isJump(i_2,j_2,i_1,j_1){
-        
+        // checks if the piece between the player's initial and desired final position belongs to its enemy
         let DDP=this.board[i_2][j_2]
         if (DDP==-1){
             let DP=this.board[i_1][j_1]
@@ -104,7 +103,8 @@ export class Checkers extends Abstract_game_engine{
         return false
     }
     getJumpingMoves(){
-        //return a boolean(true if there is a possible jump and false otherwise)
+        //return a boolean(true if there is a possible jump and false otherwise) and returns the available jump moves (not used but for further improvement of the game)
+        //it gets all possible jumps for all the pieces of the currentplayer
         let jumpMoves=[];        
         let start=0,count=0
         if (this.currentPlayer==0){
@@ -116,24 +116,24 @@ export class Checkers extends Abstract_game_engine{
                 let currPiece=this.board[Math.abs(i)][j]
                 if (this.isCurrentPlayer(currPiece)){
                     count++
-                    if (j>1){/////check leftttt
+                    if (j>1){ //check left diagonal
                         if (i<6){
                             if (this.isJump(Math.abs(i+2),j-2,Math.abs(i+1),j-1))
                                 jumpMoves.push([Math.abs(i),j,Math.abs(i+2),j-2])
                         }
-                        if (currPiece>1){
+                        if (currPiece>1){ //if the piece is a king it can move backward
                             if (i>1){
                                 if (this.isJump(Math.abs(i-2),j-2,Math.abs(i-1),j-1))
                                     jumpMoves.push([Math.abs(i),j,Math.abs(i-2),j-2])
                             }
                         }
                     }            
-                    if(j<6){//checkkk right
+                    if(j<6){//check right diagonal
                         if (i<6){
                             if (this.isJump(Math.abs(i+2),j+2,Math.abs(i+1),j+1))
                             jumpMoves.push([Math.abs(i),j,Math.abs(i+2),j+2])
                         }
-                        if (currPiece>1){
+                        if (currPiece>1){ //if the piece is a king it can move backward
                             if (i>1){
                                 if (this.isJump(Math.abs(i-2),j-2,Math.abs(i-1),j+1))
                                 jumpMoves.push([Math.abs(i),j,Math.abs(i-2),j-2])
@@ -143,8 +143,11 @@ export class Checkers extends Abstract_game_engine{
                     }
                 }     
             }
+            let deads=this.deads0
+            if (this.currentPlayer)
+                deads=this.deads1
             
-            if (count==12) ///count -deadssssssssssssssssssssssssssssssssss
+            if (count==(12-deads)) //you already tested all the pieces of the current player
                 break
             
         }
@@ -153,83 +156,76 @@ export class Checkers extends Abstract_game_engine{
     }
 /////////////////////////////////////////////////////////////////////////////////
     isValidMove(fromRow, fromCol, toRow, toCol) {
-        // console.log(this.board);
-        // console.log(fromRow);
-        // console.log(fromCol);
-        // console.log(toRow);
-        // console.log(toCol);
-        // console.log(this.currentPlayer);
-        // console.log(this.board)
+        
         //check if input is within bounds
         if( !(this.isCellInBounds(fromRow,fromCol)&& this.isCellInBounds(toRow,toCol))){
             console.log("out of bound");
             return false
         }
         const piece = this.board[fromRow][fromCol];
-        ///////////////m7taga ageb el available jump movessss w ashof lw how mesh ray7 lw7da menhaaaaa
+       
         // Check if the piece belongs to the current player
         if (!this.isCurrentPlayer(piece)) {
             console.log("not your piece!");
+            alert("not your piece!!!")
             return false;
         }
 
         // Check if the destination cell is not occupied
-        //logic related to checkerssssssss
         if ((this.board[toRow][toCol]) != -1) {
             console.log("not empty place");
+            alert("place not empty!!!")
             return false;
         }
-        //keda keda el far2 lazem yb2a <=2
-        //normal case lazem ymsho feldiagonals forward 
-        //lw homa king ye2dro ymsho fel diagonals forward and backward
-        // lw 2 steps fel diagonal lazem ely fel nos ykon  lon mokhtalef
+        //get the horizontal and vertical offsets
         let vSteps=toRow-fromRow
         let hSteps=toCol-fromCol
+        //check that the offsets are equal and <=2
         if (Math.abs(hSteps)>2 || Math.abs(vSteps)>2 || Math.abs(hSteps)!=Math.abs(vSteps)){
             console.log("step>2 or not moving in diagonal")
+            alert("invalid input")
             return false
         }
+        //check if an unkinged piece is trying to move backward
         if ((vSteps<0 && piece<2 && this.currentPlayer==1)||(vSteps>0 && piece<2 && this.currentPlayer==0) ){
             console.log("unkinged moving backward!!")
+            alert("unkinged piece moving backward!!")
             return false
         }
         
         if (Math.abs(hSteps)==2){
-            //3yzen n-check en ely mabenhom bta3et el 3dw
+            //check that the in-between piece belongs to the enemy
             let inBetweenPiece=this.board[fromRow+(vSteps/2)][fromCol+(hSteps/2)];
             if (this.isCurrentPlayer(inBetweenPiece)){
-                console.log("7t2tel nfsk")
+                console.log("attempt to kill your self")
+                alert("attempt to kill your self")
                 return false
             }
             
         }
         if (Math.abs(hSteps)==1){
-            //7shofffff lw kan fy step b 2 w hwa m3mlhashhhhhh
-            // let bool,jumpMoves=[[]]
+            //check if there was an available jump but the player didn't attempt it
             const {bool,jumpMoves}=this.getJumpingMoves()
             console.log(bool)
             console.log(jumpMoves)
+            if (bool){
+                console.log("there is a jump!")
+                alert("there is a jump!")
+            }
             return !bool
             
         }
         return true;
-
-        // Check if the move is valid for the piece
-        
+    
     }
     
 
     Drawer(state){
-        // document.remove()
+        //delete the previous state
         const to_be_del=document.getElementById("tablee")
         if (to_be_del!=null){
             to_be_del.remove()
         }
-        let player="white's player turn"
-        if (this.currentPlayer%2==1){
-            player="black's player turn"
-        }
-        // document.getElementById('turn').innerText=player+" Player Turn";
         const tbl = document.createElement("table");
         tbl.setAttribute("id","tablee");
         const tblBody = document.createElement("tbody");
@@ -248,8 +244,7 @@ export class Checkers extends Abstract_game_engine{
             cell.style.fontFamily="Copperplate";
             
             row.appendChild(cell);
-        }
-        
+        }        
         tblBody.appendChild(row);
         for (let i = 0; i < state.length; i++) {
 
@@ -281,8 +276,6 @@ export class Checkers extends Abstract_game_engine{
                     cell.innerHTML='&#9812'
                     console.log("kingg walahyyy")
                 }
-                    
-                // cell.addEventListener("mouseup",this.clicked)
                 row.appendChild(cell);
                 
             }

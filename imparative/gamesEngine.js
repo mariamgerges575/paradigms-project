@@ -1,7 +1,7 @@
 import { Abstract_game_engine } from "./Abstract_game_engine.js";
 import {eightQueens} from "./eightqueens.js"
 import { tic_tac_toe } from "./tic-tac-toe.js";
-import { Checkers } from "./checkers.js";
+import { Checkers } from "./Checker.js";
 import { Chess } from "./Chess.js";
 import { connect4 } from "./connect4.js";
 import {sudoku} from "./sudoku.js";
