@@ -101,7 +101,7 @@ export class Chess extends Abstract_game_engine{
             console.log(fromCol);
             console.log(toRow);
             console.log(toCol);
-            console.log("e3");
+            console.log("e");
             return false
         }
         const piece = this.board[fromRow][fromCol];

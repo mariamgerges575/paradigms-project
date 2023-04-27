@@ -162,7 +162,7 @@ export class Checkers extends Abstract_game_engine{
         // console.log(this.board)
         //check if input is within bounds
         if( !(this.isCellInBounds(fromRow,fromCol)&& this.isCellInBounds(toRow,toCol))){
-            console.log("out of bounds");
+            console.log("out of bound");
             return false
         }
         const piece = this.board[fromRow][fromCol];
