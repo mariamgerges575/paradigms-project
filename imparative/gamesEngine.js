@@ -3,6 +3,8 @@ import {eightQueens} from "./eightqueens.js"
 import { tic_tac_toe } from "./tic-tac-toe.js";
 import { Checkers } from "./checkers.js";
 import { Chess } from "./Chess.js";
+import { connect4 } from "./connect4.js";
+import {sudoku} from "./sudoku.js";
 // console.log(localStorage.getItem("choose"));
 var gamee;
 var butt=document.getElementById("but");
@@ -16,7 +18,7 @@ switch(localStorage.getItem("choose"))
     }
     case 'sudoku':
     {
-        gamee=new eightQueens ();
+        //gamee=new  sudoku();
         break;
     }
     case 'checkers':
@@ -26,7 +28,7 @@ switch(localStorage.getItem("choose"))
     }
     case 'connect4':
     {
-        gamee=new eightQueens ();
+        gamee=new connect4();
         break;
     }
     case 'tictactoe':

@@ -75,6 +75,16 @@ export class  Abstract_game_engine {
     isCellInBounds(row, col) {
         return row >= 0 && row < this.rowNumbers && col >= 0 && col < this.colNumbers;
     }
+    drawFisrtRow(style){
+        for (let i = 0 ;i< state[0].length; i++){
+            const cell = document.createElement("td");
+            cell.style=style//'height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #000;background-color:#e0e0d8';
+            let ascii=i+97
+            ascii='&#0'+ascii
+            cell.innerHTML=ascii
+            row.appendChild(cell);
+        }
+    }
 
     // isCellInBounds(row1, col1,row2,col2) {
     //     return (row1 >= 0 && row1 < this.rowNumbers && col1 >= 0 && col1 < this.colNumbers)&&(row2 >= 0 && row2 < this.rowNumbers && col2 >= 0 && col2 < this.colNumbers);
