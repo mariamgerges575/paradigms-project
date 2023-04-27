@@ -92,20 +92,25 @@ export class Chess extends Abstract_game_engine{
     isValidMove(move) {
         const { fromRow, fromCol, toRow, toCol } = move;
         console.log(this.board);
+        console.log(fromRow);
+        console.log(fromCol);
+        console.log(toRow);
+        console.log(toCol);
+        if( !(this.isCellInBounds(fromRow,fromCol)&& this.isCellInBounds(toRow,toCol))){
+            console.log(fromRow);
+            console.log(fromCol);
+            console.log(toRow);
+            console.log(toCol);
+            console.log("e3");
+            return false
+        }
         const piece = this.board[fromRow][fromCol];
         console.log(fromRow);
         console.log(fromCol);
         console.log(toRow);
         console.log(toCol);
         console.log(this.currentPlayer);
-        if( !(this.isCellInBounds(fromRow,fromCol)&& this.isCellInBounds(toRow,toCol))){
-            // console.log(fromRow);
-            // console.log(fromCol);
-            // console.log(toRow);
-            // console.log(toCol);
-            console.log("e3");
-            return false
-        }
+
         // Check if the piece belongs to the current player
         if (this.getPieceColor(piece) != this.currentPlayer) {
             console.log("e1");
