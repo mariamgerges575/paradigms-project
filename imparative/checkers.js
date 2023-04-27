@@ -153,9 +153,7 @@ export class Checkers extends Abstract_game_engine{
     }
 /////////////////////////////////////////////////////////////////////////////////
     isValidMove(fromRow, fromCol, toRow, toCol) {
-        
         // console.log(this.board);
-        const piece = this.board[fromRow][fromCol];
         // console.log(fromRow);
         // console.log(fromCol);
         // console.log(toRow);
@@ -167,6 +165,7 @@ export class Checkers extends Abstract_game_engine{
             console.log("out of bounds");
             return false
         }
+        const piece = this.board[fromRow][fromCol];
         ///////////////m7taga ageb el available jump movessss w ashof lw how mesh ray7 lw7da menhaaaaa
         // Check if the piece belongs to the current player
         if (!this.isCurrentPlayer(piece)) {
