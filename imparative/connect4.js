@@ -50,9 +50,6 @@ export class connect4 extends Abstract_game_engine{
         tbl.setAttribute("id","tablee");  // create table
         const tblBody = document.createElement("tbody"); 
         const row = document.createElement("tr");
-        const cell = document.createElement("td");
-        cell.style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #1f59df;background-color:#ffffff;';
-        row.appendChild(cell)
         for (let i = 0 ;i< state[0].length; i++){
             const cell = document.createElement("td");
             cell.style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #1f59df;background-color:#ffffff;';
@@ -66,9 +63,6 @@ export class connect4 extends Abstract_game_engine{
         for (let i = 0; i <state.length  ; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara 
             const row = document.createElement("tr");
             const cell=document.createElement("td");
-            cell.style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #1f59df;background-color:#ffffff;';
-            cell.innerHTML=i+1;
-            row.appendChild(cell);
            
             for (let j = 0; j < state[0].length; j++) { 
                
@@ -91,6 +85,7 @@ export class connect4 extends Abstract_game_engine{
         tbl.style="border-style:solid;background-color:#1f59df;border:10";
        
     }
+
     Controller (input)
     {
         this.ClearInput("firstInput");

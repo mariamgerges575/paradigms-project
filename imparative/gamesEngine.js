@@ -18,7 +18,7 @@ switch(localStorage.getItem("choose"))
     }
     case 'sudoku':
     {
-        //gamee=new  sudoku();
+        gamee=new  sudoku();
         break;
     }
     case 'checkers':
