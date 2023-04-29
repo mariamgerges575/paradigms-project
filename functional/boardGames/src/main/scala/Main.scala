@@ -35,7 +35,8 @@
 //}
 
 object Main extends App {
-  val gui = CheckersGUI
+  val gui = InitialScreen
+}
 
 //val obj=functions
 //  val addFive=obj.add(5)
@@ -63,4 +64,3 @@ object Main extends App {
 
 
 
-}

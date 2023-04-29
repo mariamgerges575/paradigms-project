@@ -1,135 +1,202 @@
 
-class ChessGame(gameState: Array[Array[Char]]) {
+import javax.swing.JOptionPane
 
+class ChessGame() {
+  var chessGUI = ChessGUI
+  ChessGUI.game = this
   // Define the dimensions of the board
-  val numRows = gameState.length
-  val numCols = gameState(0).length
+  val numRows = 8
+  val numCols = 8
 
   // Define the piece characters
-  val blackKing = 'k'
-  val blackQueen = 'q'
-  val blackRook = 'r'
-  val blackBishop = 'b'
-  val blackKnight = 'n'
-  val blackPawn = 'p'
-  val whiteKing = 'K'
-  val whiteQueen = 'Q'
-  val whiteRook = 'R'
-  val whiteBishop = 'B'
-  val whiteKnight = 'N'
-  val whitePawn = 'P'
+  val whitePieces = Set('K', 'Q', 'R', 'B', 'N', 'P')
+  val blackPieces = Set('k', 'q', 'r', 'b', 'n', 'p')
 
-  // Define the current player
-  var currentPlayer = "white"
+  // Define the current player as a var
+  var currentPlayer: String = "black"
 
-  // Define the Drawer function
-  def draw(): Unit = {
-    for (row <- 0 until numRows) {
-      for (col <- 0 until numCols) {
-        print(gameState(row)(col))
-        print(" ")
+
+  var gameState: Array[Array[Char]] = Array.tabulate(numRows, numCols)((i, j) => {
+    (i, j) match {
+      case (0, 0) => 'r'
+      case (0, 1) => 'n'
+      case (0, 2) => 'b'
+      case (0, 3) => 'q'
+      case (0, 4) => 'k'
+      case (0, 5) => 'b'
+      case (0, 6) => 'n'
+      case (0, 7) => 'r'
+      case (1, j) => 'p'
+      case (6, j) => 'P'
+      case (7, 0) => 'R'
+      case (7, 1) => 'N'
+      case (7, 2) => 'B'
+      case (7, 3) => 'Q'
+      case (7, 4) => 'K'
+      case (7, 5) => 'B'
+      case (7, 6) => 'N'
+      case (7, 7) => 'R'
+      case _ => ' '
+    }
+  })
+
+  def Drawer(): Unit = {
+    chessGUI.clearGui()
+    val currentSize = chessGUI.getSize()
+    chessGUI.setPreferredSize(currentSize)
+    chessGUI.drawBoard()
+  }
+
+  def checkLength(str1: String, str2: String): Boolean = {
+    print()
+    (str1.length==2) && (str2.length==2)
+  }
+
+
+  def parseInput(str1: String,str2: String): ((Int, Int), (Int, Int)) = {
+    val from = (str1.substring(0, 1).toInt - 1, str1.substring(1).toLowerCase()(0) - 'a')
+    val to = (str2.substring(0, 1).toInt - 1, str2.substring(1).toLowerCase()(0) - 'a')
+
+    (from, to)
+  }
+
+  def isOpponent(loc: (Int, Int)): Boolean = {
+    val oppPiece = if (currentPlayer == "white") blackPieces else whitePieces
+    oppPiece.contains(gameState(loc._1)(loc._2))
+
+  }
+  def isCurrentPlayerPiece(loc: (Int, Int)): Boolean = {
+    val oppPiece = if (currentPlayer == "black") blackPieces else whitePieces
+    oppPiece.contains(gameState(loc._1)(loc._2))
+
+  }
+
+  def isValidPawnMove(from: (Int, Int), to: (Int, Int)): Boolean = {
+    val rowDiff = to._1 - from._1
+    val colDiff = to._2 - from._2
+    val forwardDir = if (currentPlayer == "white") -1 else 1
+    val startRow = if (currentPlayer == "white") numRows - 2 else 1
+    val isTwoSquares = rowDiff == 2 * forwardDir && colDiff == 0 && from._1 == startRow && isEmpty((from._1 + forwardDir, from._2)) && isEmpty(to)
+    val isOneSquare = rowDiff == forwardDir && colDiff == 0 && isEmpty(to)
+    val isCapture = rowDiff == forwardDir && Math.abs(colDiff) == 1 && isOpponent(to)
+    print( isTwoSquares || isOneSquare || isCapture)
+    isTwoSquares || isOneSquare || isCapture
+  }
+
+
+  def isValidRookMove(fromPos: (Int, Int), toPos: (Int, Int))(PathClear:((Int,Int),(Int,Int))=>Boolean): Boolean = {
+    val (fromRow, fromCol) = fromPos
+    val (toRow, toCol) = toPos
+
+    if(PathClear(fromPos,toPos)) print("SALKAAAAAA")
+    else {print("msh salka")}
+    (fromRow == toRow || fromCol == toCol)&& PathClear(fromPos,toPos)
+  }
+
+  def isValidKnightMove(fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
+    val (fromRow, fromCol) = fromPos
+    val (toRow, toCol) = toPos
+    // Check if the move is a L-shape move
+    Math.abs(toRow - fromRow) == 2 && Math.abs(toCol - fromCol) == 1 ||
+      Math.abs(toRow - fromRow) == 1 && Math.abs(toCol - fromCol) == 2
+  }
+
+
+  def isValidBishopMove(fromPos: (Int, Int), toPos: (Int, Int))(PathClear:((Int,Int),(Int,Int))=>Boolean): Boolean = {
+    val (fromRow, fromCol) = fromPos
+    val (toRow, toCol) = toPos
+    // Check if the move is a diagonal move
+    Math.abs(toRow - fromRow) == Math.abs(toCol - fromCol)&&PathClear(fromPos,toPos)
+  }
+
+
+  def isValidQueenMove(fromPos: (Int, Int), toPos: (Int, Int))(PathClear:((Int,Int),(Int,Int))=>Boolean): Boolean = {
+    isValidRookMove(fromPos, toPos)(PathClear) || isValidBishopMove(fromPos, toPos)(PathClear)
+  }
+  def outOfBounds(from: (Int, Int), to: (Int, Int)): Boolean = {
+    (from._1 >= gameState.length || from._1 < 0) || (from._2 >= gameState(0).length || from._2 < 0) || (to._1 >= gameState.length || to._1 <0) || (to._2 >= gameState(0).length || to._2 < 0)
+  }
+
+  def isValidKingMove(fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
+    val (fromRow, fromCol) = fromPos
+    val (toRow, toCol) = toPos
+    // Check if the move is a one-square move
+    Math.abs(toRow - fromRow) <= 1 && Math.abs(toCol - fromCol) <= 1
+  }
+  def isEmpty(loc: (Int, Int)): Boolean = gameState(loc._1)(loc._2) == ' '
+  // Define helper function to check if the path between "from" and "to" is clear
+  def isPathClear(from: (Int, Int), to: (Int, Int)): Boolean = {
+    val rowDiff = to._1 - from._1
+    val colDiff = to._2 - from._2
+    val rowDir = if (rowDiff < 0) -1 else if (rowDiff > 0) 1 else 0
+    val colDir = if (colDiff < 0) -1 else if (colDiff > 0) 1 else 0
+    val numSteps = Math.max(Math.abs(rowDiff), Math.abs(colDiff))
+    (1 until numSteps).forall(step => isEmpty((from._1 + step * rowDir, from._2 + step * colDir)))
+  }
+
+
+
+  def checkMove(fromPos:(Int,Int),toPos:(Int,Int)): Boolean = {
+    if (outOfBounds(fromPos,toPos)) {false}
+    else if (isCurrentPlayerPiece(toPos)) {
+      print("Your Piece ya 8aby");
+      false
+    }
+    else {
+      val piece = gameState(fromPos._1)(fromPos._2)
+      print(piece)
+      piece.toLower match {
+        case 'p' => isValidPawnMove(fromPos, toPos)
+        case 'r' => isValidRookMove(fromPos, toPos)(isPathClear)
+        case 'n' => isValidKnightMove(fromPos, toPos)
+        case 'b' => isValidBishopMove(fromPos, toPos)(isPathClear)
+        case 'q' => isValidQueenMove(fromPos, toPos)(isPathClear)
+        case 'k' => isValidKingMove(fromPos, toPos)
+        case _ => false
       }
-      println()
     }
-    println("Current player: " + currentPlayer)
+
   }
 
-  // Define the Controller function
-  def applyMove(from: (Int, Int), to: (Int, Int)): Boolean = {
-
-    // Extract the piece from the "from" location
-    val piece = gameState(from._1)(from._2)
-
-    // Check if the move is valid
-    if (isValidMove(piece, from, to)) {
-
-      // Move the piece to the "to" location
-      gameState(to._1)(to._2) = piece
-      gameState(from._1)(from._2) = ' '
-
-      // Switch the current player
-      if (currentPlayer == "white") {
-        currentPlayer = "black"
-      } else {
-        currentPlayer = "white"
-      }
-
-      return true
-    }
-
-    false
+  // Define a function that updates the game state
+  def updateGameState(fromPos: (Int, Int), toPos: (Int, Int)): Unit = {
+    val (fromRow, fromCol) = fromPos
+    val (toRow, toCol) = toPos
+    gameState(toRow)(toCol) = gameState(fromRow)(fromCol)
+    gameState(fromRow)(fromCol) = ' '
+    currentPlayer = if (currentPlayer == "black") "white" else "black"
   }
 
-  // Define the Model function
-  def isValidMove(piece: Char, from: (Int, Int), to: (Int, Int)): Boolean = {
 
-    // Define helper functions to check if the "to" location is empty or occupied by an opponent piece
-    def isEmpty(loc: (Int, Int)): Boolean = gameState(loc._1)(loc._2) == ' '
-    def isOpponent(loc: (Int, Int)): Boolean = {
-      val oppPiece = if (currentPlayer == "white") blackPieces else whitePieces
-      oppPiece.contains(gameState(loc._1)(loc._2))
-    }
 
-    // Define helper functions to check if the move is valid for each piece type
-    def isValidKingMove(): Boolean = {
-      val rowDiff = Math.abs(from._1 - to._1)
-      val colDiff = Math.abs(from._2 - to._2)
-      (rowDiff == 1 || colDiff == 1) && !(rowDiff == 1 && colDiff == 1) // King can move one square in any direction
-    }
-    def isValidQueenMove(): Boolean = {
-      val rowDiff = Math.abs(from._1 - to._1)
-      val colDiff = Math.abs(from._2 - to._2)
-      (rowDiff == colDiff || rowDiff == 0 || colDiff == 0) && isPathClear(from, to) // Queen can move any number of squares diagonally, horizontally, or vertically
-    }
-    def isValidRookMove(): Boolean = {
-      val rowDiff = Math.abs(from._1 - to._1)
-      val colDiff = Math.abs(from._2 - to._2)
-      (rowDiff == 0 || colDiff == 0) && isPathClear(from, to) // Rook can move any number of squares horizontally or vertically
-    }
-    def isValidBishopMove(): Boolean = {
-      val rowDiff = Math.abs(from._1 - to._1)
-      val colDiff = Math.abs(from._2 - to._2)
-      rowDiff == colDiff && isPathClear(from, to) // Bishop can move any number of squares diagonally
-    }
-    def isValidKnightMove(): Boolean = {
-      val rowDiff = Math.abs(from._1 - to._1)
-      val colDiff = Math.abs(from._2 - to._2)
-      (rowDiff == 2 && colDiff == 1) || (rowDiff == 1 && colDiff == 2) // Knight can move in an "L" shape
-    }
-    def isValidPawnMove(): Boolean = {
-      val rowDiff = to._1 - from._1
-      val colDiff = to._2 - from._2
-      val forwardDir = if (currentPlayer == "white") -1 else 1
-      val startRow = if (currentPlayer == "white") numRows - 2 else 1
-      val isTwoSquares = rowDiff == 2 * forwardDir && colDiff == 0 && from._1 == startRow && isEmpty((from._1 + forwardDir, from._2)) && isEmpty(to)
-      val isOneSquare = rowDiff == forwardDir && colDiff == 0 && isEmpty(to)
-      val isCapture = rowDiff == forwardDir && Math.abs(colDiff) == 1 && isOpponent(to)
-      isTwoSquares || isOneSquare || isCapture
+  def ValidateAndApply(fromString:String,toString:String)
+                      (isValidLength:(String,String)=>Boolean)
+                      (ParsedInput:(String,String)=>((Int,Int),(Int,Int)))
+                      (isValidMove:(((Int,Int),(Int,Int))=>Boolean))
+                      (ApplyAndSwitch:(((Int,Int),(Int,Int))=>Unit))
+  :Boolean={
+
+    isValidLength(fromString,toString) &&
+      isValidMove(ParsedInput(fromString,toString)._1, ParsedInput(fromString,toString)._2) match {
+      case false=> false
+      case true=>ApplyAndSwitch(ParsedInput(fromString,toString)._1, ParsedInput(fromString,toString)._2);true
+
     }
 
-    // Define helper function to check if the path between "from" and "to" is clear
-    def isPathClear(from: (Int, Int), to: (Int, Int)): Boolean = {
-      val rowDiff = to._1 - from._1
-      val colDiff = to._2 - from._2
-      val rowDir = if (rowDiff < 0) -1 else if (rowDiff > 0) 1 else 0
-      val colDir = if (colDiff < 0) -1 else if (colDiff > 0) 1 else 0
-      val numSteps = Math.max(Math.abs(rowDiff), Math.abs(colDiff))
-      (1 until numSteps).forall(step => isEmpty((from._1 + step * rowDir, from._2 + step * colDir)))
-    }
 
-    // Check if the move is valid based on the piece type
-    piece match {
-      case `whiteKing` | `blackKing` => isValidKingMove()
-      case `whiteQueen` | `blackQueen` => isValidQueenMove()
-      case `whiteRook` | `blackRook` => isValidRookMove()
-      case `whiteBishop` | `blackBishop` => isValidBishopMove()
-      case `whiteKnight` | `blackKnight` => isValidKnightMove()
-      case `whitePawn` | `blackPawn` => isValidPawnMove()
-      case _ => false // Invalid piece character
-    }
   }
 
-  // Define the sets of white and black pieces for use in the isOpponent helper function
-  val blackPieces = Set(blackKing, blackQueen, blackRook, blackBishop, blackKnight, blackPawn)
-  val whitePieces = Set(whiteKing, whiteQueen, whiteRook, whiteBishop, whiteKnight, whitePawn)
+
+
+  def controller(fromString:String,toString:String): Unit = {
+
+    ValidateAndApply(fromString,toString)(checkLength)(parseInput)(checkMove)(updateGameState) match {
+      case true=>Drawer()
+      case false=> JOptionPane.showMessageDialog(null, "Invalid move. Please try again.")
+    }
+
+  }
+
+
 }
+
