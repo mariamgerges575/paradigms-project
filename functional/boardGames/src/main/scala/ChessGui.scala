@@ -27,9 +27,6 @@ object ChessGUI extends JFrame("Chess") {
   val rowLabelPanel = new JPanel(new GridLayout(numRows, 1))
 
 
-
-
-
   // Create the input fields and button
   val fromField = new JTextField(3)
   val toField = new JTextField(3)
@@ -110,7 +107,10 @@ object ChessGUI extends JFrame("Chess") {
     else return " "
 
   }
+
   // Define the Drawer function
   def drawBoard(): Unit = {
     // Create the panel for the row labels
     currentPlayerLabel.setText("Current player: " + game.currentPlayer)
+  }
+}
