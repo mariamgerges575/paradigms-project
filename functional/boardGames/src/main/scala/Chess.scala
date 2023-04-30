@@ -96,24 +96,25 @@ class ChessGame() {
     (from, to)
   }
 
-  def validateMove(from: (Int, Int), to: (Int, Int)): Boolean = {
+  def validateMove(gameState: GameState, from: (Int, Int), to: (Int, Int)): Boolean = {
 
     def isCellInBounds(from: (Int, Int), to: (Int, Int)): Boolean = {
       (from._1 < gameState.length && from._1 >= 0) && (from._2 < gameState(0).length && from._2 >= 0) && (to._1 < gameState.length && to._1 >= 0) && (to._2 < gameState(0).length && to._2 >= 0) match {
         case false => false
-        case true => def isCurrentPlayerPiece(loc: (Int, Int)): Boolean = {
-          val oppPiece = if (currentPlayer == "black") blackPieces else whitePieces
-          oppPiece.contains(gameState(loc._1)(loc._2)) match {
+        case true => def isCurrentPlayerPiece(from: (Int, Int), to: (Int, Int)): Boolean = {
+          val oppPieces = if (currentPlayer == "white") blackPieces else whitePieces
+          val myPieces = if (currentPlayer == "black") blackPieces else whitePieces
+          oppPieces.contains(gameState(from._1)(from._2)) || myPieces.contains(gameState(to._1)(to._2)) match {
             case true => false
             case false => def isValidPieceMove(fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
               val piece = gameState(fromPos._1)(fromPos._2)
               piece.toLower match {
-                case 'p' => isValidPawnMove(fromPos, toPos)
-                case 'r' => isValidRookMove(fromPos, toPos)(isPathClear)
-                case 'n' => isValidKnightMove(fromPos, toPos)
-                case 'b' => isValidBishopMove(fromPos, toPos)(isPathClear)
-                case 'q' => isValidQueenMove(fromPos, toPos)(isPathClear)
-                case 'k' => isValidKingMove(fromPos, toPos)
+                case 'p' => isValidPawnMove(gameState, fromPos, toPos)
+                case 'r' => isValidRookMove(gameState, fromPos, toPos)(isPathClear)
+                case 'n' => isValidKnightMove(gameState, fromPos, toPos)
+                case 'b' => isValidBishopMove(gameState, fromPos, toPos)(isPathClear)
+                case 'q' => isValidQueenMove(gameState, fromPos, toPos)(isPathClear)
+                case 'k' => isValidKingMove(gameState, fromPos, toPos)
                 case _ => false
               }
 
@@ -123,7 +124,7 @@ class ChessGame() {
           }
         }
 
-          isCurrentPlayerPiece(to)
+          isCurrentPlayerPiece(from, to)
       }
     }
 
