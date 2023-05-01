@@ -2,105 +2,102 @@
 import ChessGUI._
 
 import java.awt.event.ActionEvent
-import javax.swing.JOptionPane
+import javax.swing.{JLabel, JOptionPane}
 
-class ChessGame() {
+class ChessGamee() {
   var chessGUI = ChessGUI
   // Define the dimensions of the board
   val numRows = 8
   val numCols = 8
 
   // Define the piece characters
-  val whitePieces = Set('K', 'Q', 'R', 'B', 'N', 'P')
-  val blackPieces = Set('k', 'q', 'r', 'b', 'n', 'p')
+  val whitePieces = Set('K', 'Q', 'R', 'X', 'N', 'P')
+  val blackPieces = Set('k', 'q', 'r', 'x', 'n', 'p')
 
   //IMMUTABLE DATA//
   type currentPlayer=Option[Int]
-  type Board=Array[Array[Char]]
+  type Board=Array[Array[Int]]
+  type state=(Board,currentPlayer)
 
-  val initialCurrentPlayer:currentPlayer=Some(0)
-  val initialBoard: Board = (Array.tabulate(numRows, numCols)((i, j) => {
-    (i, j) match {
-      case (0, 0) => 'r'
-      case (0, 1) => 'n'
-      case (0, 2) => 'b'
-      case (0, 3) => 'q'
-      case (0, 4) => 'k'
-      case (0, 5) => 'b'
-      case (0, 6) => 'n'
-      case (0, 7) => 'r'
-      case (1, j) => 'p'
-      case (6, j) => 'P'
-      case (7, 0) => 'R'
-      case (7, 1) => 'N'
-      case (7, 2) => 'B'
-      case (7, 3) => 'Q'
-      case (7, 4) => 'K'
-      case (7, 5) => 'B'
-      case (7, 6) => 'N'
-      case (7, 7) => 'R'
-      case _ => ' '
-    }
-  }))
-
-  val initialState=(initialBoard,initialCurrentPlayer)
-
-
-  // INITIALIZE//
-  def Initialize():Unit={
-
-    boardGUI=initialBoard
-    chessGUI.drawScreen()
-    Drawer(initialBoard,initialCurrentPlayer)
-    chessGUI.setVisible(true)
-    chessGUI.applyMove.addActionListener((e: ActionEvent) =>gameAction(takeUserInput)
-
-    )
-
-
+  val initChessBoard:()=>(Array[Array[Int]],Option[Int],Option[JLabel])={()=>
+    ( (Array.tabulate(8, 8)((i, j) => {
+      (i, j) match {
+        case (0, 0) => 'r'
+        case (0, 1) => 'n'
+        case (0, 2) => 'x'
+        case (0, 3) => 'q'
+        case (0, 4) => 'k'
+        case (0, 5) => 'x'
+        case (0, 6) => 'n'
+        case (0, 7) => 'r'
+        case (1, j) => 'p'
+        case (6, j) => 'P'
+        case (7, 0) => 'R'
+        case (7, 1) => 'N'
+        case (7, 2) => 'X'
+        case (7, 3) => 'Q'
+        case (7, 4) => 'K'
+        case (7, 5) => 'X'
+        case (7, 6) => 'N'
+        case (7, 7) => 'R'
+        case _ => ' '
+      }
+    })),Some(1),Some(new JLabel()))
   }
-  //FUNCTIONS RESPONSIBLE OF DEALING WITH GUI
-  def takeUserInput(): (String,String)= {
-    val fromString = fromField.getText()
-    val toString = toField.getText()
-    (fromString,toString)
-  }
+  def getPieceASCII(piece: Any): Char = {
+    if (piece == 'p')
+      return 9823
 
-
-  //IMPURE FUNCTION
-  def gameAction(getInput:(String,String)): Unit = {
-    val fromString=getInput._1
-    val toString=getInput._2
-    if (fromString == "" && toString == "") {
-      return
+    if (piece == 'P') {
+      return 9817
     }
-    controller(boardGUI,player, fromString, Option(toString)) match {
-      case Some(newState) => Drawer(newState._1,newState._2);boardGUI=newState._1;player=newState._2;println("guiPlayer :"+player);println("logicPlayer :"+newState._2)
-      case None =>  println("here2")
-        showErrorMessage; clearInput
-
+    if (piece == 'n') {
+      return 9822
     }
-
+    if (piece == 'N') {
+      return 9816
+    }
+    if (piece == 'x') {
+      return 9821
+    }
+    if (piece == 'X') {
+      return 9815
+    }
+    if (piece == 'q') {
+      return 9819
+    }
+    if (piece == 'Q') {
+      return 9813
+    }
+    if (piece == 'k') {
+      return 9818
+    }
+    if (piece == 'K') {
+      return 9812
+    }
+    if (piece == 'r') {
+      return 9820
+    }
+    if (piece == 'R') {
+      return 9814
+    }
+    if (piece == ' '||piece=='0'){
+      return 32
+    }
+    else{
+      piece match {
+        case s:Int=>s.toChar
+        case c:Char=>c
+        case _=>' '
+      }
+    }
   }
 
   //DRAWER AND CONTROLLER//
-
-  def Drawer(board:Board,Player: currentPlayer): Unit = {
-    clearGui()
-    val currentSize = chessGUI.getSize()
-    chessGUI.setPreferredSize(currentSize)
-    chessGUI.drawBoard((board,Player))
-  }
-
   def controller(board: Board,Player:currentPlayer, fromString: String, toString: Option[String]): Option[(Board,currentPlayer)] = {
     println("currentPlayer :"+Player )
     ValidateAndApply(board,Player, fromString, toString)(checkInputLength)(parseInput)(validateMove)(applyMove)
-
   }
-
-
-
-
 
 
   //MAIN FUNCTIONS USED IN CONTROLLER//
@@ -119,11 +116,7 @@ class ChessGame() {
       case true =>
         println("here")
         ApplyMove(board,Player,ParsedInput(fromString, toString)._1, ParsedInput(fromString, toString)._2)
-
-
     }
-
-
   }
 
   def checkInputLength(str1: String, str2: Option[String]): Boolean = {
@@ -131,7 +124,6 @@ class ChessGame() {
       case None=> (str1.length==2||str1.length==1)
       case Some(str2)=> (str1.length==2) && (str2.length==2||str2.length==1)
     }
-
   }
 
   def parseInput(str1: String,str2: Option[String]): ((Int, Option[Int]), Option[(Int, Option[Int])]) = {
@@ -147,11 +139,7 @@ class ChessGame() {
         case 2=> Some(str2.charAt(0).toInt - 49, Some(str2.charAt(1).toInt - 97))
       }
         (Input1,Input2)
-
-
     }
-
-
   }
 
 
@@ -166,40 +154,33 @@ class ChessGame() {
     val to=(toRow,toCol)
 
 
-
-
     def isCellInBounds(from: (Int, Int), to:(Int, Int)): Boolean = {
       (from._1 < board.length && from._1 >= 0) && (from._2 < board(0).length && from._2 >= 0) && (to._1 < board.length && to._1 >= 0) && (to._2 < board(0).length && to._2 >= 0) match {
         case false => false
         case true => def isCurrentPlayerPiece(from: (Int, Int),to:(Int,Int)): Boolean = {
           val oppPieces = if (Player ==  Some(1)) blackPieces else whitePieces
           val myPieces=if (Player == Some( 0)) blackPieces else whitePieces
-          oppPieces.contains(board(from._1)(from._2))||myPieces.contains(board(to._1)(to._2)) match {
+          oppPieces.contains(board(from._1)(from._2).toChar)||myPieces.contains(board(to._1)(to._2).toChar) match {
             case true => println("not currentPlayer");false
             case false => def isValidPieceMove(fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
               val piece = board(fromPos._1)(fromPos._2)
-              piece.toLower match {
+              piece.toChar.toLower match {
                 case 'p' => isValidPawnMove(board,Player,fromPos, toPos)
                 case 'r' => isValidRookMove(board,Player,fromPos, toPos)(isPathClear)
                 case 'n' => isValidKnightMove(board,Player,fromPos, toPos)
-                case 'b' => isValidBishopMove(board,Player,fromPos, toPos)(isPathClear)
+                case 'x' => isValidBishopMove(board,Player,fromPos, toPos)(isPathClear)
                 case 'q' => isValidQueenMove(board,Player,fromPos, toPos)(isPathClear)
                 case 'k' => isValidKingMove(board,Player,fromPos, toPos)
                 case _ => false
               }
-
             }
-
               isValidPieceMove(from, to)
           }
         }
-
           isCurrentPlayerPiece(from, to)
       }
     }
-
     isCellInBounds(from, to)
-
   }
 
   def applyMove(board: Board,Player:currentPlayer,fromPos: (Int, Option[Int]), toPos: Option[(Int, Option[Int])]): Option[(Board,currentPlayer)] = {
@@ -223,9 +204,9 @@ class ChessGame() {
     }
   }
 
-  def showErrorMessage(): Unit = {
-    JOptionPane.showMessageDialog(null, "Invalid move. Please try again.")
-  }
+//  def showErrorMessage(): Unit = {
+//    JOptionPane.showMessageDialog(null, "Invalid move. Please try again.")
+//  }
 
 
 
@@ -245,7 +226,7 @@ class ChessGame() {
 
   def isOpponent(board: Board,Player:currentPlayer,loc: (Int, Int)): Boolean = {
     val oppPiece = if (Player ==  Some(1)) blackPieces else whitePieces
-    oppPiece.contains(board(loc._1)(loc._2))
+    oppPiece.contains(board(loc._1)(loc._2).toChar)
 
   }
   1
@@ -306,6 +287,21 @@ class ChessGame() {
 
 
 
+  //  //IMPURE FUNCTION
+  //  def gameAction(getInput:(String,String)): Unit = {
+  //    val fromString=getInput._1
+  //    val toString=getInput._2
+  //    if (fromString == "" && toString == "") {
+  //      return
+  //    }
+  //    controller(boardGUI,player, fromString, Option(toString)) match {
+  //      case Some(newState) => Drawer(newState._1,newState._2);boardGUI=newState._1;player=newState._2;println("guiPlayer :"+player);println("logicPlayer :"+newState._2)
+  //      case None =>  println("here2")
+  //        showErrorMessage; clearInput
+  //
+  //    }
+  //
+  //  }
 
 
 

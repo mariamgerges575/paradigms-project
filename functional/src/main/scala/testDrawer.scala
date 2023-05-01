@@ -4,7 +4,7 @@ import javax.swing._
 
 
 object gameEngine extends JFrame("boardGames") {
-  val chessObj= new ChessGame
+  val chessObj= new ChessGamee
 
   //  val currentPlayer=1
   //  val gameState =Array( Array(0, 1, 1, 1, 1, 1, 1, 1),
@@ -16,36 +16,11 @@ object gameEngine extends JFrame("boardGames") {
   //                        Array(1, 1, 1, 1, 1, 1, 1, 1),
   //                        Array(0, 0, 0, 0, 0, 0, 0, 0))
 
-  val initChessBoard:()=>(Array[Array[Int]],Option[(String,JLabel)])={()=>
-    (this.initialBoard,Some("black",new JLabel()))
-  }
-  type currentPlayer=String
-  type Board=Array[Array[Int]]
-  type GameState= (Board,currentPlayer)
 
-  val initialBoard:Array[Array[Int]] = (Array.tabulate(8, 8)((i, j) => {
-    (i, j) match {
-      case (0, 0) => 'r'
-      case (0, 1) => 'n'
-      case (0, 2) => 'x'
-      case (0, 3) => 'q'
-      case (0, 4) => 'k'
-      case (0, 5) => 'x'
-      case (0, 6) => 'n'
-      case (0, 7) => 'r'
-      case (1, j) => 'p'
-      case (6, j) => 'P'
-      case (7, 0) => 'R'
-      case (7, 1) => 'N'
-      case (7, 2) => 'X'
-      case (7, 3) => 'Q'
-      case (7, 4) => 'K'
-      case (7, 5) => 'X'
-      case (7, 6) => 'N'
-      case (7, 7) => 'R'
-      case _ => ' '
-    }
-  }))
+  type currentPlayer=Option[Int]
+  type Board=Array[Array[Int]]
+  type GameState=(Board,currentPlayer)
+
   val initCheckerState:()=>(Array[Array[Int]],Option[(Int,JLabel)])=()=>(Array( Array(1, 1, 1, 1, 1, 1, 1, 1),
     Array(0, 0, 0, 0, 0, 0, 0, 0),
     Array(1, 1, 1, 1, 1, 1, 1, 1),
@@ -73,7 +48,7 @@ object gameEngine extends JFrame("boardGames") {
       }
     }
 
-  def drawBoard(howToDrawFunction:JPanel=>(Int,Option[(Int,Int)])=>Unit):Array[Array[Int]]=>(Option[(String,JLabel)])=>Unit ={ //el function dy btb2a ghza takhod el grid 3latol
+  def drawBoard(howToDrawFunction:JPanel=>(Int,Option[(Int,Int)])=>Unit):Array[Array[Int]]=>Option[((Option[Int],Option[JLabel]))]=>Unit ={ //el function dy btb2a ghza takhod el grid 3latol
     (state)=>(player)=> {
       val panel = new JPanel(new GridLayout(state.length+1, state.length+1))
       Array.concat(Array(Array.range('a','a'+state.length)),state).zipWithIndex.foreach((row) => {
@@ -82,8 +57,9 @@ object gameEngine extends JFrame("boardGames") {
       this.add(panel,"Center")
       player match {
         case Some(value)=>
-          value._2.setText("Current player: " + value._1)
-          println("entered")
+          value._2 match {
+            case Some(lbl)=>lbl.setText("Current player: " + value._1.getOrElse(5).toString)
+          }
         case _=>println("none")
       }
       this.pack()
@@ -113,7 +89,7 @@ object gameEngine extends JFrame("boardGames") {
   }
   //7n pass drawer w controller w create initial badal mykhod state
   //btakhod drawer w controller w 2 strings ely 7ytktbo 3la el labels bto3 el textbox w function b init el board
-  def initGame(drawerfn: Array[Array[Int]]=>Option[(String,JLabel)] => Unit,input1:String,input2:Option[String],initState:()=>(Array[Array[Int]],Option[(String,JLabel)]),controller:(GameState,String,String)=>Option[ GameState]) = {
+  def initGame(drawerfn: Array[Array[Int]]=>Option[((Option[Int],Option[JLabel]))] => Unit,input1:String,input2:Option[String],initState:()=>(Array[Array[Int]],Option[Int],Option[JLabel]),controller:(Board,currentPlayer,String,Option[String])=>Option[ GameState]) = {
     /////////controller (board,Option[ player ], input1,Option[ input2 ])//////////////////////////////////////////
     /////////make object of type newState 3shan n -update el variable ely 7 passo lelcontroller tny
     /////////kol el 2 players el player of type string
@@ -121,20 +97,18 @@ object gameEngine extends JFrame("boardGames") {
     ///////// controller return type Either[board,(board,Int)]
     val init=initState()
     var state = init._1
+    var currentPlayer=init._2
+    val playerlbl=init._3
     val inputPanel = new JPanel()
     val button = new JButton("Apply Move")
-    var currentPLayer:Option[String]=None //will get passed to the controller
-    init._2 match {
-      case Some(value)=>
-        inputPanel.add(value._2)
-        currentPLayer=Some(value._1)
-    }
+//    var currentPLayer:Option[Int]=None //will get passed to the controller
+    inputPanel.add(playerlbl.getOrElse(new JPanel()))
     inputPanel.add(button)
     val l1=new JLabel(input1)
     val t1=new JTextField(3)
     inputPanel.add(l1)
     inputPanel.add(t1)
-    var currPlayer: String = currentPLayer.getOrElse("black")
+
     input2 match {
       case Some(value) =>
         val l2 = new JLabel(value)
@@ -147,17 +121,11 @@ object gameEngine extends JFrame("boardGames") {
             val input2 = t2.getText()
             println(input2)
             println(input1)
-
-            //call controller
-//            val currPlayer=
-
-            val lbl:(String,JLabel)=init._2.getOrElse("str",new JLabel())
-
-            controller((state,currPlayer), input1, input2) match {
-              case Some(newState) => {drawer(newState._1)(Some((newState._2,lbl._2)))
-                                      currPlayer=newState._2
-                                        state=newState._1}
-              case None => chessObj.showErrorMessage();
+            controller(state,currentPlayer, input1, Some(input2)) match {
+              case Some(newState) => drawerfn(newState._1)(Some((newState._2,playerlbl)))
+                                      currentPlayer=newState._2
+                                    state=newState._1
+              case None => JOptionPane.showMessageDialog(null, "Invalid move. Please try again.")
 
             }
 
@@ -173,14 +141,14 @@ object gameEngine extends JFrame("boardGames") {
     }
 
     this.add(inputPanel, "South")
-    drawerfn(state)(init._2)
+    drawerfn(state)(Some(currentPlayer,playerlbl))
   }
 
   ////////////////TEST//////////////////////////////////////////////////////
 
   val howToDrawBoardTile=draw(chessObj.getPieceASCII,getCheckersBackgroundColor)
   val drawer=drawBoard(howToDrawBoardTile)
-  initGame(drawer,"to",Some("from"),initChessBoard,chessObj.controller)
+  initGame(drawer,"to",Some("from"),chessObj.initChessBoard,chessObj.controller)
 //  initGame(drawer,"from",Some("to"),initCheckerState)
   this.setVisible(true)
 }
