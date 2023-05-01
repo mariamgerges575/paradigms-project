@@ -1,119 +1,134 @@
 import java.awt._
+import java.awt.event.ActionEvent
 import javax.swing._
-//3yza a3rf eh ely mmkn yt7at fel class 3dy ka attributesss
-//el elgoz2 elsabeet ely 3latol mawgod fel gui ??(mmkn nb2a bn pass function btrsem el hgat el initial we7na bncreate el le3ba w el function dy kan already mt-pass-leha 7gat
-//3yzen nfkr el pattern matching 7y7sal ezy 8aleban f 7ett en mra 7nakhod etnen iputs w mara wa7ed
-//lesa fl al3ab ely b etnenat mfkrtesh el label byt-handle ezy
-//yarab ya mosahellllllllllllllllllllll
+
 object CheckersGUI extends JFrame("Checkers") {
-  val currentPlayer=1
-  val gameState =Array( Array(1, 1, 1, 1, 1, 1, 1, 1),
+ 
+//  val currentPlayer=1
+//  val gameState =Array( Array(0, 1, 1, 1, 1, 1, 1, 1),
+//                        Array(0, 0, 0, 0, 0, 0, 0, 0),
+//                        Array(1, 1, 1, 1, 1, 1, 1, 1),
+//                        Array(0, 0, 0, 0, 0, 0, 0, 0),
+//                        Array(1, 1, 1, 1, 1, 1, 1, 1),
+//                        Array(0, 0, 0, 0, 0, 0, 0, 0),
+//                        Array(1, 1, 1, 1, 1, 1, 1, 1),
+//                        Array(0, 0, 0, 0, 0, 0, 0, 0))
+
+  val initCheckerState:()=>(Array[Array[Int]],Option[(Int,JLabel)])=()=>(Array( Array(1, 1, 1, 1, 1, 1, 1, 1),
     Array(0, 0, 0, 0, 0, 0, 0, 0),
     Array(1, 1, 1, 1, 1, 1, 1, 1),
     Array(0, 0, 0, 0, 0, 0, 0, 0),
     Array(1, 1, 1, 1, 1, 1, 1, 1),
     Array(0, 0, 0, 0, 0, 0, 0, 0),
     Array(1, 1, 1, 1, 1, 1, 1, 1),
-    Array(0, 0, 0, 0, 0, 0, 0, 0))
-  val squareSize = 50 // mmkn yb2a hardcoded
-  val numRows = gameState.length //   mmkn nb2a ngbhom f sa3etha
-  val numCols = gameState(0).length
+    Array(0, 0, 0, 0, 0, 0, 0, 0)),Some(1,new JLabel()))
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////initializationnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn/////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //3yz yt2asem functions brdo ka2enena bnteach it how to initialize
-  //function for letters row
-  //function for numbers row
-  //function textboxes
-  //maybe function for label
-  val boardPanel = new JPanel(new GridLayout(numRows, numCols))
-
-  // Create the label for displaying the current player turn
-  val currentPlayerLabel = new JLabel("Current player: " )
-  val colLabelPanel = new JPanel(new GridLayout(1, numCols))
-  val rowLabelPanel = new JPanel(new GridLayout(numRows, 1))
-
-  // Create the input fields and button
-  val fromField = new JTextField(3)
-  val toField = new JTextField(3)
-  val button = new JButton("Apply Move")
-
-  // Add the input fields and button to the GUI
-  val inputPanel = new JPanel()
-  inputPanel.add(currentPlayerLabel)
-  inputPanel.add(new JLabel("From:"))
-  inputPanel.add(fromField)
-  inputPanel.add(new JLabel("To:"))
-  inputPanel.add(toField)
-  inputPanel.add(button)
-  this.add(inputPanel, BorderLayout.SOUTH)
-  //el arkam ely fel gmb
-  for (row <- numRows until 0 by -1 ) {
-    val label = new JLabel((row).toString)
-    label.setHorizontalAlignment(SwingConstants.CENTER)
-    label.setPreferredSize(new Dimension(squareSize, squareSize))
-    rowLabelPanel.add(label)
-  }
-  //el7orof ely fo2
-  this.add(rowLabelPanel, BorderLayout.WEST)
-  val label = new JLabel()
-  label.setHorizontalAlignment(SwingConstants.CENTER)
-  label.setPreferredSize(new Dimension(squareSize, squareSize))
-  colLabelPanel.add(label)
-  for (col <- 0 until numCols) {
-    val label = new JLabel(('a' + col).toChar.toString)
-    label.setHorizontalAlignment(SwingConstants.CENTER)
-    label.setPreferredSize(new Dimension(squareSize, squareSize))
-    colLabelPanel.add(label)
-  }
-  this.add(colLabelPanel, BorderLayout.NORTH)
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  val getAscii:Int=>Char=(p)=> p match { //btakhod int w t-return el ascii
+  val getCheckersAscii:Any=>Char=(p)=> p match { //btakhod int w t-return el ascii
     case 0 => 9898
     case 1 => 9899
     case -1 => ' '
+    case '0'=> ' '
+    case s:Int => s.toChar
   }
-  val getBackgroundColor:(Int,Int)=>Color= (i, j)=> //this function takes row , coloumn and return the suitable back ground colour ,
-    ((i+j) % 2 == 0) match {                        //mesh 3rfa lw el7eta dy ynf3 ne3mel beha pattern matching based on type fel al3ab ely el background feha sbta
-      case true => new Color(232, 235, 239)
-      case false => new Color(125, 135, 150)
+  val getCheckersBackgroundColor:(Int,Int)=>Color= (i, j)=> //this function takes row , coloumn and return the suitable back ground colour ,
+    (i==0||j==0)match {
+      case true=> new Color(255,255,255)          //literals
+      case false => {
+        ((i+j) % 2 == 0) match {                      
+          case true => new Color(232, 235, 239)
+          case false => new Color(125, 135, 150)
+        }
+      }
     }
 
-  def drawBoard(howToDrawFunction:(Int,Int,Int)=>Unit): (Array[Array[Int]])=>Unit = (state)=>{ //el function dy btb2a ghza takhod el grid 3latol
-    state.zipWithIndex.foreach((row)=>{
-      row._1.zipWithIndex.foreach(
-        tile=>howToDrawFunction(tile._1,row._2,tile._2))
-    })
-    this.add(boardPanel, BorderLayout.CENTER)
-    this.pack()
+  def drawBoard(howToDrawFunction:JPanel=>(Int,Option[(Int,Int)])=>Unit):Array[Array[Int]]=>(Option[(Int,JLabel)])=>Unit ={ //el function dy btb2a ghza takhod el grid 3latol
+    (state)=>(player)=> {
+      val panel = new JPanel(new GridLayout(state.length+1, state.length+1))
+      Array.concat(Array(Array.range('a','a'+state.length)),state).zipWithIndex.foreach((row) => {
+        Array.concat(Array((row._2+48)),row._1).zipWithIndex.foreach(
+          tile => howToDrawFunction(panel)(tile._1, Some(row._2, tile._2)))})
+      this.add(panel,"Center")
+      player match {
+        case Some(value)=>
+          value._2.setText("Current player: " + value._1)
+          println("entered")
+        case _=>println("none")
+      }
+      this.pack()
+    }
   }
-  def draw(getWhichAscii:Int=>Char,getBackColor:(Int,Int)=>Color):(Int,Int,Int)=>Unit={  //btakhod el function ely bt3rf tgeb el ascii w el function ely bt3rf tgeb elbackground
-    //mesh 3rfa lw khalenaha btkhod function bgeb elcurrentplayer 7nb2a keda sy2enha wla la w 7yb2a eh elwad3 3shan tmshy 3la kolo m7taga search
 
-    (piece,i,j)=>{
+  def draw(getWhichAscii:Any=>Char,getBackColor:Any):(JPanel)=>(Int,Option[(Int,Int)])=>Unit={
+  (panel)=>(piece:Int,ij:Option[(Int,Int)])=>{
+
       val label = new JLabel(getWhichAscii(piece).toString)
       label.setFont(new Font("Serif", Font.PLAIN, 50))
       label.setHorizontalAlignment(SwingConstants.CENTER)
-      label.setBackground(getBackColor(i,j))
-      println()
+      getBackColor match{
+        case fun:((Int,Int)=>Color)=>
+          ij match {
+            case Some(value)=>label.setBackground(fun(value._1,value._2))
+          }
+        case fun2:(()=>Color)=>label.setBackground(fun2())
+        case clr:Color=>label.setBackground(clr)
+        case _ =>println("no colour function was passed")
+        
+      }
       label.setOpaque(true)
-      boardPanel.add(label)
+      panel.add(label)
+      this.pack()
+    }
+  }
+  //7n pass drawer w controller w create initial badal mykhod state
+  //btakhod drawer w controller w 2 strings ely 7ytktbo 3la el labels bto3 el textbox w function b init el board
+  def initGame(drawerfn: Array[Array[Int]]=>Option[(Int,JLabel)] => Unit,input1:String,input2:Option[String],initState:()=>(Array[Array[Int]],Option[(Int,JLabel)])) = {
+    val init=initState()
+    val state=init._1
+    val inputPanel = new JPanel()
+    val button = new JButton("Apply Move")
+    var currentPLayer:Option[Int]=None //will get passed to the controller
+    init._2 match {
+      case Some(value)=>
+        inputPanel.add(value._2)
+        currentPLayer=Some(value._1)
+    }
+    inputPanel.add(button)
+    val l1=new JLabel(input1)
+    val t1=new JTextField(3)
+    inputPanel.add(l1)
+    inputPanel.add(t1)
+    input2 match {
+      case Some(value) => 
+        val l2 = new JLabel(value)
+        val t2 = new JTextField(3)
+        inputPanel.add(l2)
+        inputPanel.add(t2)
+        button.addActionListener(new AbstractAction() {
+          override def actionPerformed(e: ActionEvent): Unit = {
+            val input1 = t1.getText()
+            val input2 = t2.getText()
+              println(input2)
+            println(input1)
+            //call controller
+          }})
+      
+      case None => 
+        button.addActionListener(new AbstractAction() {
+          override def actionPerformed(e: ActionEvent): Unit = {
+            val input1 = t1.getText()
+            println(input1)
+            //call controller
+          }})
     }
 
+    this.add(inputPanel, "South")
+    drawerfn(state)(init._2)
   }
-  /////////////test////////////////////////////////////////////
-  val drawBasedOnAsciiAndColourFunction=draw(getAscii,getBackgroundColor)
-  val readyToTakeTheState=drawBoard(drawBasedOnAsciiAndColourFunction)
-  val trying_with_one=draw(getAscii,_)
-  val ha=trying_with_one(_)
 
-
-  val trying_to_use_a_function_with_one=try
-    readyToTakeTheState(this.gameState)
-//  this.setVisible(true)
+////////////////TEST//////////////////////////////////////////////////////
+  
+  val howToDrawBoardTile=draw(getCheckersAscii,getCheckersBackgroundColor)
+  val drawer=drawBoard(howToDrawBoardTile)
+  initGame(drawer,"from",Some("to"),initCheckerState)
+  this.setVisible(true)
 }

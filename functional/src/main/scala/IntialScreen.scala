@@ -100,7 +100,6 @@ object InitialScreen extends JFrame {
 //      }
 //    })})
 
-
   // Load the background image
   val backgroundImageIcon = new ImageIcon("src/main/scala/bg.jpg")
   val backgroundImage = backgroundImageIcon.getImage()

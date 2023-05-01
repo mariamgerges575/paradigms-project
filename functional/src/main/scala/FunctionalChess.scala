@@ -11,32 +11,84 @@ class ChessGame() {
   val numCols = 8
 
   // Define the piece characters
-  val whitePieces = Set('K', 'Q', 'R', 'B', 'N', 'P')
-  val blackPieces = Set('k', 'q', 'r', 'b', 'n', 'p')
+  val whitePieces = Set('K', 'Q', 'R', 'X', 'N', 'P')
+  val blackPieces = Set('k', 'q', 'r', 'x', 'n', 'p')
 
   //IMMUTABLE DATA//
   type currentPlayer=String
-  type Board=Array[Array[Char]]
+  type Board=Array[Array[Int]]
   type GameState= (Board,currentPlayer)
   val initialCurrentPlayer:currentPlayer="black"
+  def getPieceASCII(piece: Any): Char = {
+    if (piece == 'p')
+      return 9823
+
+    if (piece == 'P') {
+      return 9817
+    }
+    if (piece == 'n') {
+      return 9822
+    }
+    if (piece == 'N') {
+      return 9816
+    }
+    if (piece == 'x') {
+      return 9821
+    }
+    if (piece == 'X') {
+      return 9815
+    }
+    if (piece == 'q') {
+      return 9819
+    }
+    if (piece == 'Q') {
+      return 9813
+    }
+    if (piece == 'k') {
+      return 9818
+    }
+    if (piece == 'K') {
+      return 9812
+    }
+    if (piece == 'r') {
+      return 9820
+    }
+    if (piece == 'R') {
+      return 9814
+    }
+    if (piece == ' '||piece=='0'){
+      return 32
+    }
+
+    else{
+      piece match {
+        case s:Int=>return s.toChar
+        case c:Char=>return c
+        case _=>return ' '
+      }
+    }
+
+
+
+  }
   val initialBoard: Board = (Array.tabulate(numRows, numCols)((i, j) => {
     (i, j) match {
       case (0, 0) => 'r'
       case (0, 1) => 'n'
-      case (0, 2) => 'b'
+      case (0, 2) => 'x'
       case (0, 3) => 'q'
       case (0, 4) => 'k'
-      case (0, 5) => 'b'
+      case (0, 5) => 'x'
       case (0, 6) => 'n'
       case (0, 7) => 'r'
       case (1, j) => 'p'
       case (6, j) => 'P'
       case (7, 0) => 'R'
       case (7, 1) => 'N'
-      case (7, 2) => 'B'
+      case (7, 2) => 'X'
       case (7, 3) => 'Q'
       case (7, 4) => 'K'
-      case (7, 5) => 'B'
+      case (7, 5) => 'X'
       case (7, 6) => 'N'
       case (7, 7) => 'R'
       case _ => ' '
@@ -49,8 +101,8 @@ class ChessGame() {
   // INITIALIZE//
   def Initialize():Unit={
 
-    stateGUI=initialState
-    Drawer(initialState)
+//    stateGUI=initialState
+//    Drawer(initialState)
     chessGUI.setVisible(true)
     chessGUI.applyMove.addActionListener((e: ActionEvent) =>gameAction(takeUserInput)
 
@@ -73,25 +125,25 @@ class ChessGame() {
     if (fromString == "" && toString == "") {
       return
     }
-    controller(stateGUI, fromString, toString) match {
-      case Some(newState) => Drawer(newState); stateGUI = newState
-      case None =>  showErrorMessage; clearInput
-
-    }
+//    controller(stateGUI, fromString, toString) match {
+////      case Some(newState) => Drawer(newState); stateGUI = newState
+//      case None =>  showErrorMessage; clearInput
+//
+//    }
 
   }
 
   //DRAWER AND CONTROLLER//
 
-   def Drawer(gameState: GameState): Unit = {
-  clearGui()
-  val currentSize = chessGUI.getSize()
-  chessGUI.setPreferredSize(currentSize)
-  chessGUI.drawBoard(gameState)
-   }
+//   def Drawer(gameState: GameState): Unit = {
+//  clearGui()
+//  val currentSize = chessGUI.getSize()
+//  chessGUI.setPreferredSize(currentSize)
+//  chessGUI.drawBoard(gameState)
+//   }
 
   def controller(gameState: GameState, fromString: String, toString: String): Option[ GameState] = {
-
+    println("gwa el controller")
     ValidateAndApply(gameState, fromString, toString)(checkInputLength)(parseInput)(validateMove)(applyMove)
 
   }
@@ -141,15 +193,15 @@ class ChessGame() {
         case true => def isCurrentPlayerPiece(from: (Int, Int),to:(Int,Int)): Boolean = {
           val oppPieces = if (gameState._2 == "white") blackPieces else whitePieces
           val myPieces=if (gameState._2 == "black") blackPieces else whitePieces
-          oppPieces.contains(gameState._1(from._1)(from._2))||myPieces.contains(gameState._1(to._1)(to._2)) match {
+          oppPieces.contains(gameState._1(from._1)(from._2).toChar)||myPieces.contains(gameState._1(to._1)(to._2).toChar) match {
             case true => false
             case false => def isValidPieceMove(fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
               val piece = gameState._1(fromPos._1)(fromPos._2)
-              piece.toLower match {
+              piece.toChar.toLower match {
                 case 'p' => isValidPawnMove(gameState,fromPos, toPos)
                 case 'r' => isValidRookMove(gameState,fromPos, toPos)(isPathClear)
                 case 'n' => isValidKnightMove(gameState,fromPos, toPos)
-                case 'b' => isValidBishopMove(gameState,fromPos, toPos)(isPathClear)
+                case 'x' => isValidBishopMove(gameState,fromPos, toPos)(isPathClear)
                 case 'q' => isValidQueenMove(gameState,fromPos, toPos)(isPathClear)
                 case 'k' => isValidKingMove(gameState,fromPos, toPos)
                 case _ => false
@@ -209,7 +261,7 @@ class ChessGame() {
 
   def isOpponent(gameState: GameState,loc: (Int, Int)): Boolean = {
     val oppPiece = if (gameState._2 == "white") blackPieces else whitePieces
-    oppPiece.contains(gameState._1(loc._1)(loc._2))
+    oppPiece.contains(gameState._1(loc._1)(loc._2).toChar)
 
   }
 

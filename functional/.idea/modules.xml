@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChessTest.iml" filepath="$PROJECT_DIR$/.idea/modules/ChessTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ChessTest-build.iml" filepath="$PROJECT_DIR$/.idea/modules/ChessTest-build.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Functional.iml" filepath="$PROJECT_DIR$/.idea/modules/Functional.iml" />
     </modules>
   </component>
 </project>
