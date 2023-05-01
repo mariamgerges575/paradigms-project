@@ -46,7 +46,7 @@ class ChessGame() {
   val initialState=(initialBoard,initialCurrentPlayer)
 
 
-  // INITIALIZE//
+  // INITIALIZE///////////////////////
   def Initialize():Unit={
 
     stateGUI=initialState
