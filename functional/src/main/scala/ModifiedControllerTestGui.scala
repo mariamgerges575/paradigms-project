@@ -4,12 +4,12 @@ import javax.swing._
 
 object ChessGUI extends JFrame("Chess") {
 
-  type currentPlayer = String
+  type currentPlayer = Option[Int]
   type Board = Array[Array[Char]]
-  type GameState = (Array[Array[Char]], currentPlayer)
+
   // Create the ChessGame object
 
-  var stateGUI:GameState= //THE MUTABLE GUI OBJECT WHICH WILL BE TAKEN AS PARAMETERS TO KEEP THE CONTROLLER CLASS PURE//
+  var boardGUI:Board= //THE MUTABLE GUI OBJECT WHICH WILL BE TAKEN AS PARAMETERS TO KEEP THE CONTROLLER CLASS PURE//
     (Array.tabulate(numRows, numCols)((i, j) => {
       (i, j) match {
         case (0, 0) => 'r'
@@ -32,7 +32,8 @@ object ChessGUI extends JFrame("Chess") {
         case (7, 7) => 'R'
         case _ => ' '
       }
-    }),"black")
+    }))
+  var player:currentPlayer=Some(0)
 
 
   // Create the label for displaying the current player turn
@@ -151,7 +152,7 @@ object ChessGUI extends JFrame("Chess") {
   }
 
   // Define the Drawer function
-  def drawBoard(gameState: GameState): Unit = {
+  def drawBoard(gameState: (Board,currentPlayer)): Unit = {
     // Create the panel for the row labels
     currentPlayerLabel.setText("Current player: " +gameState._2 )
     for (row <- numRows - 1 to 0 by -1) {

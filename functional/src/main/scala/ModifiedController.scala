@@ -15,10 +15,10 @@ class ChessGame() {
   val blackPieces = Set('k', 'q', 'r', 'b', 'n', 'p')
 
   //IMMUTABLE DATA//
-  type currentPlayer=String
+  type currentPlayer=Option[Int]
   type Board=Array[Array[Char]]
-  type GameState= (Board,currentPlayer)
-  val initialCurrentPlayer:currentPlayer="black"
+
+  val initialCurrentPlayer:currentPlayer=Some(0)
   val initialBoard: Board = (Array.tabulate(numRows, numCols)((i, j) => {
     (i, j) match {
       case (0, 0) => 'r'
@@ -46,12 +46,12 @@ class ChessGame() {
   val initialState=(initialBoard,initialCurrentPlayer)
 
 
-  // INITIALIZE///////////////////////
+  // INITIALIZE//
   def Initialize():Unit={
 
-    stateGUI=initialState
+    boardGUI=initialBoard
     chessGUI.drawScreen()
-    Drawer(initialState)
+    Drawer(initialBoard,initialCurrentPlayer)
     chessGUI.setVisible(true)
     chessGUI.applyMove.addActionListener((e: ActionEvent) =>gameAction(takeUserInput)
 
@@ -74,9 +74,10 @@ class ChessGame() {
     if (fromString == "" && toString == "") {
       return
     }
-    controller(stateGUI, fromString, Option(toString)) match {
-      case Some(newState) => Drawer(newState); stateGUI = newState
-      case None =>  showErrorMessage; clearInput
+    controller(boardGUI,player, fromString, Option(toString)) match {
+      case Some(newState) => Drawer(newState._1,newState._2);boardGUI=newState._1;player=newState._2;println("guiPlayer :"+player);println("logicPlayer :"+newState._2)
+      case None =>  println("here2")
+        showErrorMessage; clearInput
 
     }
 
@@ -84,16 +85,16 @@ class ChessGame() {
 
   //DRAWER AND CONTROLLER//
 
-  def Drawer(gameState: GameState): Unit = {
+  def Drawer(board:Board,Player: currentPlayer): Unit = {
     clearGui()
     val currentSize = chessGUI.getSize()
     chessGUI.setPreferredSize(currentSize)
-    chessGUI.drawBoard(gameState)
+    chessGUI.drawBoard((board,Player))
   }
 
-  def controller(gameState: GameState, fromString: String, toString: Option[String]): Option[ GameState] = {
-
-    ValidateAndApply(gameState, fromString, toString)(checkInputLength)(parseInput)(validateMove)(applyMove)
+  def controller(board: Board,Player:currentPlayer, fromString: String, toString: Option[String]): Option[(Board,currentPlayer)] = {
+    println("currentPlayer :"+Player )
+    ValidateAndApply(board,Player, fromString, toString)(checkInputLength)(parseInput)(validateMove)(applyMove)
 
   }
 
@@ -104,19 +105,20 @@ class ChessGame() {
 
   //MAIN FUNCTIONS USED IN CONTROLLER//
 
-  def ValidateAndApply(gameState: GameState,fromString: String, toString: Option[String])
+  def ValidateAndApply(board: Board,Player:currentPlayer,fromString: String, toString: Option[String])
                       (isValidLength: (String, Option[String]) => Boolean)
                       (ParsedInput: (String, Option[String]) => ((Int, Option[Int]), Option[(Int, Option[Int])]))
-                      (isValidMove: (GameState,(Int, Option[Int]), Option[(Int, Option[Int])]) => Boolean)
-                      (ApplyMove: ((GameState,(Int, Option[Int]), Option[(Int, Option[Int])]) => Option[GameState]))
+                      (isValidMove: (Board,currentPlayer,(Int, Option[Int]), Option[(Int, Option[Int])]) => Boolean)
+                      (ApplyMove: ((Board,currentPlayer,(Int, Option[Int]), Option[(Int, Option[Int])]) => Option[(Board,currentPlayer)]))
 
-  : Option[GameState] = {
+  : Option[(Board,currentPlayer)] = {
     isValidLength(fromString, toString) &&
-      isValidMove(gameState,v2 = ParsedInput(fromString,v2 = toString)._1,ParsedInput(fromString,toString)._2)
+      isValidMove(board,Player, ParsedInput(fromString,v2 = toString)._1,ParsedInput(fromString,toString)._2)
     match {
       case false => None
       case true =>
-        ApplyMove(gameState,ParsedInput(fromString, toString)._1, ParsedInput(fromString, toString)._2)
+        println("here")
+        ApplyMove(board,Player,ParsedInput(fromString, toString)._1, ParsedInput(fromString, toString)._2)
 
 
     }
@@ -153,7 +155,7 @@ class ChessGame() {
   }
 
 
-  def validateMove(gameState: GameState,from_opt: (Int, Option[Int]), to_opt: Option[(Int, Option[Int])]): Boolean = {
+  def validateMove(board: Board,Player:currentPlayer,from_opt: (Int, Option[Int]), to_opt: Option[(Int, Option[Int])]): Boolean = {
 
     val fromRow=from_opt._1
     val fromCol: Int = from_opt._2.getOrElse(-1)
@@ -165,23 +167,24 @@ class ChessGame() {
 
 
 
+
     def isCellInBounds(from: (Int, Int), to:(Int, Int)): Boolean = {
-      (from._1 < gameState._1.length && from._1 >= 0) && (from._2 < gameState._1(0).length && from._2 >= 0) && (to._1 < gameState._1.length && to._1 >= 0) && (to._2 < gameState._1(0).length && to._2 >= 0) match {
+      (from._1 < board.length && from._1 >= 0) && (from._2 < board(0).length && from._2 >= 0) && (to._1 < board.length && to._1 >= 0) && (to._2 < board(0).length && to._2 >= 0) match {
         case false => false
         case true => def isCurrentPlayerPiece(from: (Int, Int),to:(Int,Int)): Boolean = {
-          val oppPieces = if (gameState._2 == "white") blackPieces else whitePieces
-          val myPieces=if (gameState._2 == "black") blackPieces else whitePieces
-          oppPieces.contains(gameState._1(from._1)(from._2))||myPieces.contains(gameState._1(to._1)(to._2)) match {
-            case true => false
+          val oppPieces = if (Player ==  Some(1)) blackPieces else whitePieces
+          val myPieces=if (Player == Some( 0)) blackPieces else whitePieces
+          oppPieces.contains(board(from._1)(from._2))||myPieces.contains(board(to._1)(to._2)) match {
+            case true => println("not currentPlayer");false
             case false => def isValidPieceMove(fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
-              val piece = gameState._1(fromPos._1)(fromPos._2)
+              val piece = board(fromPos._1)(fromPos._2)
               piece.toLower match {
-                case 'p' => isValidPawnMove(gameState,fromPos, toPos)
-                case 'r' => isValidRookMove(gameState,fromPos, toPos)(isPathClear)
-                case 'n' => isValidKnightMove(gameState,fromPos, toPos)
-                case 'b' => isValidBishopMove(gameState,fromPos, toPos)(isPathClear)
-                case 'q' => isValidQueenMove(gameState,fromPos, toPos)(isPathClear)
-                case 'k' => isValidKingMove(gameState,fromPos, toPos)
+                case 'p' => isValidPawnMove(board,Player,fromPos, toPos)
+                case 'r' => isValidRookMove(board,Player,fromPos, toPos)(isPathClear)
+                case 'n' => isValidKnightMove(board,Player,fromPos, toPos)
+                case 'b' => isValidBishopMove(board,Player,fromPos, toPos)(isPathClear)
+                case 'q' => isValidQueenMove(board,Player,fromPos, toPos)(isPathClear)
+                case 'k' => isValidKingMove(board,Player,fromPos, toPos)
                 case _ => false
               }
 
@@ -199,22 +202,24 @@ class ChessGame() {
 
   }
 
-  def applyMove(gameState: GameState,fromPos: (Int, Option[Int]), toPos: Option[(Int, Option[Int])]): Option[GameState] = {
+  def applyMove(board: Board,Player:currentPlayer,fromPos: (Int, Option[Int]), toPos: Option[(Int, Option[Int])]): Option[(Board,currentPlayer)] = {
     val (fromRow, fromCol) = (fromPos._1,fromPos._2.getOrElse(-1))
     val tuple: (Int, Option[Int]) = toPos.getOrElse((-1,Option(-1)))
     val toCol: Int = tuple._2.getOrElse(-1)
     val toRow = tuple._1
-    var newState=(gameState._1,switchPlayers(gameState._2))
+    var newState=(board,switchPlayers(Player))
     newState._1(toRow)(toCol) = newState._1(fromRow)(fromCol)
     newState._1(fromRow)(fromCol) = ' '
+    println(newState._2)
     Some(newState)
 
   }
 
   def switchPlayers(player: currentPlayer): currentPlayer = {
     player match {
-      case "white"=>"black"
-      case "black"=>"white"
+      case Some(0)=>Some(1)
+      case Some(1)=>Some(0)
+      case None=>None
     }
   }
 
@@ -225,48 +230,49 @@ class ChessGame() {
 
 
 
-
   //HELPER FUNCTIONS//
-  def isEmpty(gameState: GameState,loc: (Int, Int)): Boolean = gameState._1(loc._1)(loc._2) == ' '
+  def isEmpty(board: Board,loc: (Int, Int)): Boolean = board(loc._1)(loc._2) == ' '
 
   // Define helper function to check if the path between "from" and "to" is clear
-  def isPathClear(gameState: GameState,from: (Int, Int), to: (Int, Int)): Boolean = {
+  def isPathClear(board: Board,from: (Int, Int), to: (Int, Int)): Boolean = {
     val rowDiff = to._1 - from._1
     val colDiff = to._2 - from._2
     val rowDir = if (rowDiff < 0) -1 else if (rowDiff > 0) 1 else 0
     val colDir = if (colDiff < 0) -1 else if (colDiff > 0) 1 else 0
     val numSteps = Math.max(Math.abs(rowDiff), Math.abs(colDiff))
-    (1 until numSteps).forall(step => isEmpty(gameState,(from._1 + step * rowDir, from._2 + step * colDir)))
+    (1 until numSteps).forall(step => isEmpty(board,(from._1 + step * rowDir, from._2 + step * colDir)))
   }
 
-  def isOpponent(gameState: GameState,loc: (Int, Int)): Boolean = {
-    val oppPiece = if (gameState._2 == "white") blackPieces else whitePieces
-    oppPiece.contains(gameState._1(loc._1)(loc._2))
+  def isOpponent(board: Board,Player:currentPlayer,loc: (Int, Int)): Boolean = {
+    val oppPiece = if (Player ==  Some(1)) blackPieces else whitePieces
+    oppPiece.contains(board(loc._1)(loc._2))
 
   }
+  1
+  0
 
 
-  def isValidPawnMove(gameState: GameState,from: (Int, Int), to: (Int, Int)): Boolean = {
+  def isValidPawnMove(board: Board,Player:currentPlayer,from: (Int, Int), to: (Int, Int)): Boolean = {
     val rowDiff = to._1 - from._1
     val colDiff = to._2 - from._2
-    val forwardDir = if (gameState._2 == "white") -1 else 1
-    val startRow = if (gameState._2 == "white") numRows - 2 else 1
-    val isTwoSquares = rowDiff == 2 * forwardDir && colDiff == 0 && from._1 == startRow && isEmpty(gameState,(from._1 + forwardDir, from._2)) && isEmpty(gameState,to)
-    val isOneSquare = rowDiff == forwardDir && colDiff == 0 && isEmpty(gameState,to)
-    val isCapture = rowDiff == forwardDir && Math.abs(colDiff) == 1 && isOpponent(gameState,to)
+    val forwardDir = if (Player ==  Some(1)) -1 else 1
+    val startRow = if (Player ==  Some(1)) numRows - 2 else 1
+    val isTwoSquares = rowDiff == 2 * forwardDir && colDiff == 0 && from._1 == startRow && isEmpty(board,(from._1 + forwardDir, from._2)) && isEmpty(board,to)
+    val isOneSquare = rowDiff == forwardDir && colDiff == 0 && isEmpty(board,to)
+    val isCapture = rowDiff == forwardDir && Math.abs(colDiff) == 1 && isOpponent(board,Player,to)
 
     isTwoSquares || isOneSquare || isCapture
   }
 
 
-  def isValidRookMove(gameState: GameState,fromPos: (Int, Int), toPos: (Int, Int))(PathClear:(GameState,(Int,Int),(Int,Int))=>Boolean): Boolean = {
+  def isValidRookMove(board: Board,Player:currentPlayer,fromPos: (Int, Int), toPos: (Int, Int))(PathClear:(Board,(Int,Int),(Int,Int))=>Boolean): Boolean = {
     val (fromRow, fromCol) = fromPos
     val (toRow, toCol) = toPos
 
-    (fromRow == toRow || fromCol == toCol)&& PathClear(gameState,fromPos,toPos)
+    (fromRow == toRow || fromCol == toCol)&& PathClear(board,fromPos,toPos)
   }
 
-  def isValidKnightMove(gameState: GameState,fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
+  def isValidKnightMove(board: Board,Player:currentPlayer,fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
     val (fromRow, fromCol) = fromPos
     val (toRow, toCol) = toPos
     // Check if the move is a L-shape move
@@ -275,21 +281,21 @@ class ChessGame() {
   }
 
 
-  def isValidBishopMove(gameState: GameState,fromPos: (Int, Int), toPos: (Int, Int))(PathClear:( GameState,(Int,Int),(Int,Int))=>Boolean): Boolean = {
+  def isValidBishopMove(board: Board,Player:currentPlayer,fromPos: (Int, Int), toPos: (Int, Int))(PathClear:( Board,(Int,Int),(Int,Int))=>Boolean): Boolean = {
     val (fromRow, fromCol) = fromPos
     val (toRow, toCol) = toPos
     // Check if the move is a diagonal move
-    Math.abs(toRow - fromRow) == Math.abs(toCol - fromCol)&&PathClear(gameState,fromPos,toPos)
+    Math.abs(toRow - fromRow) == Math.abs(toCol - fromCol)&&PathClear(board,fromPos,toPos)
   }
 
 
-  def isValidQueenMove(gameState: GameState,fromPos: (Int, Int), toPos: (Int, Int))(PathClear:(GameState,(Int,Int),(Int,Int))=>Boolean): Boolean = {
-    isValidRookMove(gameState,fromPos, toPos)(PathClear) || isValidBishopMove(gameState,fromPos, toPos)(PathClear)
+  def isValidQueenMove(board: Board,Player:currentPlayer,fromPos: (Int, Int), toPos: (Int, Int))(PathClear:(Board,(Int,Int),(Int,Int))=>Boolean): Boolean = {
+    isValidRookMove(board,Player,fromPos, toPos)(PathClear) || isValidBishopMove(board,Player,fromPos, toPos)(PathClear)
   }
 
 
 
-  def isValidKingMove(gameState: GameState,fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
+  def isValidKingMove(board: Board,Player:currentPlayer,fromPos: (Int, Int), toPos: (Int, Int)): Boolean = {
     val (fromRow, fromCol) = fromPos
     val (toRow, toCol) = toPos
     // Check if the move is a one-square move
