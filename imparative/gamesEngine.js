@@ -14,39 +14,45 @@ switch(localStorage.getItem("choose"))
     case 'eightqueens':
     {
     gamee=new eightQueens ();
+    gamee.Initialize("eightqueens");
      break;
     }
     case 'sudoku':
     {
         gamee=new  sudoku();
+        gamee.Initialize("sudoku");
         break;
     }
     case 'checkers':
     {
         gamee=new Checkers ();
+        gamee.Initialize("checkers");
         break;
     }
     case 'connect4':
     {
         gamee=new connect4();
+        gamee.Initialize("connect4");
         break;
     }
     case 'tictactoe':
     {
         gamee=new tic_tac_toe();
         console.log("hoho");
+        gamee.Initialize("tictactoe");
 
         break;
     }
     case 'chess':
     {
         gamee=new Chess ();
+        gamee.Initialize("chess");
         break;
     }
 
 }
 console.log(localStorage.getItem("choose"));
-    gamee.Initialize();
+   
     // butt.addEventListener("click",gamee.takeUserInput)  ;
     butt.addEventListener("click",function(){
     gamee.takeUserInput()});

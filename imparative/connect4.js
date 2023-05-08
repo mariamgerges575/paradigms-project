@@ -5,15 +5,15 @@ export class connect4 extends Abstract_game_engine{
         super();
     }
     createBoard(){
-        let  state=[
-            [' ',' ',' ',' ',' ', ' ',' ' ],
-            [' ',' ',' ',' ',' ', ' ',' ' ],
-            [' ',' ',' ',' ',' ', ' ',' ' ],
-            [' ',' ',' ',' ',' ', ' ',' ' ],
-            [' ',' ',' ',' ',' ', ' ',' ' ],
-            [' ',' ',' ',' ',' ', ' ',' ' ]
-
-        ];
+      let  state=[
+        [' ',' ',' ',' ',' ', ' ',' ' ],
+        [' ',' ',' ',' ',' ', ' ',' ' ],
+        [' ',' ',' ',' ',' ', ' ',' ' ],
+        [' ',' ',' ',' ',' ', ' ',' ' ],
+        [' ',' ',' ',' ',' ', ' ',' ' ],
+        [' ',' ',' ',' ',' ', ' ',' ' ]
+       
+     ];
         return state;
     }
     // takeUserInput(){
@@ -40,7 +40,7 @@ export class connect4 extends Abstract_game_engine{
         {
             todel.remove()
         }
-
+        
         const to_be_del=document.getElementById("tablee")
         if (to_be_del!=null){
             to_be_del.remove()
@@ -48,7 +48,7 @@ export class connect4 extends Abstract_game_engine{
         const tbl = document.createElement("table");
         tbl.style='border:none';
         tbl.setAttribute("id","tablee");  // create table
-        const tblBody = document.createElement("tbody");
+        const tblBody = document.createElement("tbody"); 
         const row = document.createElement("tr");
         for (let i = 0 ;i<7; i++){
             const cell = document.createElement("td");
@@ -59,31 +59,31 @@ export class connect4 extends Abstract_game_engine{
             row.appendChild(cell);
         }
         tblBody.appendChild(row);
-
-        for (let i = 0; i <6 ; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara
+      
+        for (let i = 0; i <6 ; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara 
             const row = document.createElement("tr");
             const cell=document.createElement("td");
-
-            for (let j = 0; j <7; j++) {
-
+           
+            for (let j = 0; j <7; j++) { 
+               
                 const cell = document.createElement("td");
                 cell.style=this.style;
-                console.log(state.board[i][j]) ;
+               console.log(state.board[i][j]) ;
                 if (state.board[i][j]=='r')
                     cell.style.backgroundColor="#f52b2b";
                 else if (state.board[i][j]=='y')
-                    cell.style.backgroundColor="#e1f52b";
+                    cell.style.backgroundColor="#e1f52b";  
+               
 
-
-                row.appendChild(cell);
+                row.appendChild(cell); 
             }
-            tblBody.appendChild(row);
+            tblBody.appendChild(row);    
         }
-
-        tbl.appendChild(tblBody);// append table body to table nfso
-        document.body.appendChild(tbl); // b append kol dah lel document
+        
+        tbl.appendChild(tblBody);// append table body to table nfso 
+        document.body.appendChild(tbl); // b append kol dah lel document 
         tbl.style="border-style:solid;background-color:#1f59df;border:10";
-
+       
     }
     InputMessage() {
         return "Enter Input just the column ex: a"
@@ -102,29 +102,29 @@ export class connect4 extends Abstract_game_engine{
         var row;
         if(!this.isCellInBounds(state.board,2,column)) {
             // window.alert("INVALID INPUT!!");
-            return null;
+             return null;
         }
-        for(let i=0;i<6;i++)
-        {
-            if(state.board[i][column]==' ')
-            {
-                if(i==5 && state.board[i][column]==' ')
-                    row=5
-            }
+           for(let i=0;i<6;i++)
+           {
+             if(state.board[i][column]==' ')
+             {
+              if(i==5 && state.board[i][column]==' ')
+               row=5
+             }
             else{
-                row=i-1;
-                console.log(row);
-                break;
+              row=i-1;
+             console.log(row);
+             break;
             }
-        }
-        if(state.currentPlayer==1)
-            state.board[row][column]='r';
-        else
-            state.board[row][column]='y';
-        this.SwitchPlayers(state);
-        // this.Drawer(this.board);
-        return state
+           }
+            if(state.currentPlayer==1)
+                state.board[row][column]='r';
+            else
+                state.board[row][column]='y';
+            this.SwitchPlayers(state);
+            // this.Drawer(this.board);
+            return state
     }
-
+   
 
 }
