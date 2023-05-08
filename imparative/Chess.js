@@ -12,12 +12,12 @@ export class Chess extends Abstract_game_engine{
         const tbl = document.createElement("table");
         tbl.setAttribute("id","tablee");
         const tblBody = document.createElement("tbody");
-        console.log(state)
+        console.log(state.board)
         let col_letter="A";
         let row_num=1;
-        for (let i = -1; i < state.length; i++) {
+        for (let i = -1; i < state.board.length; i++) {
             const row = document.createElement("tr");
-            for (let j = -1; j < state[0].length; j++) {
+            for (let j = -1; j < state.board[0].length; j++) {
                 const cell = document.createElement("td");
                 cell.style='height:60px;width:60px;margin:1px;background-color: white;vertical-align: middle;text-align:center;font-size: 50px;box-shadow: #000;';
                 if(i===-1 && j!==-1){
@@ -46,7 +46,7 @@ export class Chess extends Abstract_game_engine{
 
                     console.log(i);
                     console.log(j);
-                    cell.innerHTML = this.getPieceASCII(state[i][j]);
+                    cell.innerHTML = this.getPieceASCII(state.board[i][j]);
                 }
 
                 row.appendChild(cell);
@@ -58,7 +58,7 @@ export class Chess extends Abstract_game_engine{
         tbl.appendChild(tblBody);
         document.getElementById("label1").innerHTML="From Cell :"
         document.getElementById("label2").innerHTML="To   Cell :"
-        if (this.currentPlayer==1){
+        if (state.currentPlayer==1){
             document.getElementById("turn").innerHTML="WHITE Player Turn";
         }
         else { document.getElementById("turn").innerHTML="BLACK Player Turn";}
@@ -89,14 +89,14 @@ export class Chess extends Abstract_game_engine{
     }
 
 
-    isValidMove(move) {
+    isValidMove(state,move) {
         const { fromRow, fromCol, toRow, toCol } = move;
-        console.log(this.board);
+        console.log(state.board);
         console.log(fromRow);
         console.log(fromCol);
         console.log(toRow);
         console.log(toCol);
-        if( !(this.isCellInBounds(fromRow,fromCol)&& this.isCellInBounds(toRow,toCol))){
+        if( !(this.isCellInBounds(state.board,fromRow,fromCol)&& this.isCellInBounds(state.board,toRow,toCol))){
             console.log(fromRow);
             console.log(fromCol);
             console.log(toRow);
@@ -104,23 +104,23 @@ export class Chess extends Abstract_game_engine{
             console.log("e");
             return false
         }
-        const piece = this.board[fromRow][fromCol];
+        const piece = state.board[fromRow][fromCol];
         console.log(fromRow);
         console.log(fromCol);
         console.log(toRow);
         console.log(toCol);
-        console.log(this.currentPlayer);
+        console.log(state.currentPlayer);
 
         // Check if the piece belongs to the current player
-        if (this.getPieceColor(piece) != this.currentPlayer) {
+        if (this.getPieceColor(piece) != state.currentPlayer) {
             console.log("e1");
             console.log(this.getPieceColor(piece));
-            console.log(this.currentPlayer);
+            console.log(state.currentPlayer);
             return false;
         }
 
         // Check if the destination cell is not occupied by a piece of the same color
-        if (this.getPieceColor(this.board[toRow][toCol]) === this.currentPlayer) {
+        if (this.getPieceColor(state.board[toRow][toCol]) === state.currentPlayer) {
             console.log("e2");
             return false;
         }
@@ -130,24 +130,24 @@ export class Chess extends Abstract_game_engine{
         // Check if the move is valid for the piece
         switch (piece.toLowerCase()) {
             case 'p':
-                return this.isValidPawnMove(move);
+                return this.isValidPawnMove(state,move);
             case 'r':
-                return this.isValidRookMove(move);
+                return this.isValidRookMove(state,move);
             case 'n':
-                return this.isValidKnightMove(move);
+                return this.isValidKnightMove(state,move);
             case 'b':
-                return this.isValidBishopMove(move);
+                return this.isValidBishopMove(state,move);
             case 'q':
-                return this.isValidQueenMove(move);
+                return this.isValidQueenMove(state,move);
             case 'k':
-                return this.isValidKingMove(move);
+                return this.isValidKingMove(state,move);
             default:
                 return false;
         }
     }
 
     start(){
-        console.log(this.board);
+        console.log(state.board);
 
 
         this.makeMove(this);
@@ -156,13 +156,13 @@ export class Chess extends Abstract_game_engine{
 
     }
 
-    applyMove(move) {
+    applyMove(state,move) {
         // TODO: implement logic for applying chess moves
 
-        this.board[move.toRow][move.toCol]=this.board[move.fromRow][move.fromCol];
-        this.board[move.fromRow][move.fromCol]=' ';
-        console.log(this.board);
-        console.table(this.board);
+        state.board[move.toRow][move.toCol]=state.board[move.fromRow][move.fromCol];
+        state.board[move.fromRow][move.fromCol]=' ';
+        console.log(state.board);
+        console.table(state.board);
 
     }
 
@@ -174,13 +174,18 @@ export class Chess extends Abstract_game_engine{
     }
 
 
-    takeUserInput(){
-       this.takeUserInput2();
-    }
+    // takeUserInput(){
+    //    this.takeUserInput2();
+    // }
     
-    Controller(fromCell,toCell) {
+    Controller(state,Input) {
         // Get the user input for the move
-
+        let str=Input.split(" ")
+        if(!this.isValidLength(str,2)){return null}
+        const fromCell=str[0]
+        const toCell=str[1]
+        console.log(fromCell);
+        console.log(toCell);
         this.ClearInput('firstInput');
         this.ClearInput('secondInput');
         // Convert the user input to the corresponding row and column indices
@@ -197,22 +202,26 @@ export class Chess extends Abstract_game_engine{
 
 
         // Check if the move is valid
-        if ( this.isValidLength(fromCell,2)&& this.isValidLength(toCell,2)&&this.isValidMove({ fromRow, fromCol, toRow, toCol })) {
+        if ( this.isValidLength(fromCell,2)&& this.isValidLength(toCell,2)&&this.isValidMove(state,{ fromRow, fromCol, toRow, toCol })) {
             // Apply the move to the this state
-            this.applyMove({ fromRow, fromCol, toRow, toCol })
-            this.SwitchPlayers();
+            this.applyMove(state,{ fromRow, fromCol, toRow, toCol })
+            this.SwitchPlayers(state);
+            // console.table(state.board)
+            return state
+
             
             // Return the updated this state
           
         } else {
             // If the move is not valid, throw an error or return null
-            alert("Invalid move");
+
+            return null
         
 
             // or return null
             // return null;
         }
-        this.Drawer(this.board);
+
     }
 
     // Helper functions for checking piece color and checking if a cell is within bounds
@@ -251,11 +260,11 @@ export class Chess extends Abstract_game_engine{
 
 
     // Functions for validating moves for each piece type
-    isValidPawnMove(move) {
+    isValidPawnMove(state,move) {
         const { fromRow, fromCol, toRow, toCol } = move;
-        const piece = this.board[fromRow][fromCol];
+        const piece = state.board[fromRow][fromCol];
         const color = this.getPieceColor(piece);
-        const enemy_piece = this.board[toRow][toCol];
+        const enemy_piece = state.board[toRow][toCol];
         const enemy_color = this.getPieceColor(enemy_piece);
 
 
@@ -294,9 +303,9 @@ export class Chess extends Abstract_game_engine{
         return false;
     }
 
-    isValidRookMove(move) {
+    isValidRookMove(state,move) {
         const { fromRow, fromCol, toRow, toCol } = move;
-        const piece = this.board[fromRow][fromCol];
+        const piece = state.board[fromRow][fromCol];
 
         // Check if the rook is moving along a row or column
         if (fromRow !== toRow && fromCol !== toCol) {
@@ -309,7 +318,7 @@ export class Chess extends Abstract_game_engine{
         let row = fromRow + stepRow;
         let col = fromCol + stepCol;
         while (row !== toRow || col !== toCol) {
-            if (this.board[row][col] !== ' ') {
+            if (state.board[row][col] !== ' ') {
                 return false;
             }
             row += stepRow;
@@ -319,9 +328,9 @@ export class Chess extends Abstract_game_engine{
         return true;
     }
 
-    isValidKnightMove(move) {
+    isValidKnightMove(state,move) {
         const { fromRow, fromCol, toRow, toCol } = move;
-        const piece = this.board[fromRow][fromCol];
+        const piece = state.board[fromRow][fromCol];
 
         // Check if the knight is moving in an L-shape
         if (Math.abs(toRow - fromRow) === 2 && Math.abs(toCol - fromCol) === 1) {
@@ -333,9 +342,9 @@ export class Chess extends Abstract_game_engine{
         return false;
     }
 
-    isValidBishopMove(move) {
+    isValidBishopMove(state,move) {
         const { fromRow, fromCol, toRow, toCol } = move;
-        const piece = this.board[fromRow][fromCol];
+        const piece = state.board[fromRow][fromCol];
 
         // Check if the bishop is moving along a diagonal
         if (Math.abs(toRow - fromRow) !== Math.abs(toCol - fromCol)) {
@@ -348,7 +357,7 @@ export class Chess extends Abstract_game_engine{
         let row = fromRow + stepRow;
         let col = fromCol + stepCol;
         while (row !== toRow || col !== toCol) {
-            if (this.board[row][col] !== ' ') {
+            if (state.board[row][col] !== ' ') {
                 return false;
             }
             row += stepRow;
@@ -358,13 +367,13 @@ export class Chess extends Abstract_game_engine{
         return true;
     }
 
-    isValidQueenMove(move) {
-        return this.isValidRookMove(move, this) || this.isValidBishopMove(move, this);
+    isValidQueenMove(state,move) {
+        return this.isValidRookMove(state,move) || this.isValidBishopMove(state,move);
     }
 
-    isValidKingMove(move) {
+    isValidKingMove(state,move) {
         const { fromRow, fromCol, toRow, toCol } = move;
-        const piece = this.board[fromRow][fromCol];
+        const piece = state.board[fromRow][fromCol];
 
         // Check if the king is moving to a neighboring cell
         if (Math.abs(toRow - fromRow) <= 1 && Math.abs(toCol - fromCol) <= 1) {
