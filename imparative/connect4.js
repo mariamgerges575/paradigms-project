@@ -5,31 +5,31 @@ export class connect4 extends Abstract_game_engine{
         super();
     }
     createBoard(){
-      let  state=[
-        [' ',' ',' ',' ',' ', ' ',' ' ],
-        [' ',' ',' ',' ',' ', ' ',' ' ],
-        [' ',' ',' ',' ',' ', ' ',' ' ],
-        [' ',' ',' ',' ',' ', ' ',' ' ],
-        [' ',' ',' ',' ',' ', ' ',' ' ],
-        [' ',' ',' ',' ',' ', ' ',' ' ]
-       
-     ];
+        let  state=[
+            [' ',' ',' ',' ',' ', ' ',' ' ],
+            [' ',' ',' ',' ',' ', ' ',' ' ],
+            [' ',' ',' ',' ',' ', ' ',' ' ],
+            [' ',' ',' ',' ',' ', ' ',' ' ],
+            [' ',' ',' ',' ',' ', ' ',' ' ],
+            [' ',' ',' ',' ',' ', ' ',' ' ]
+
+        ];
         return state;
     }
-    takeUserInput(){
-        this.takeUserInput1();
-    }
+    // takeUserInput(){
+    //     this.takeUserInput1();
+    // }
     Drawer(state){
-        const td=document.getElementById("secondInput")
-        if (td!=null)
-        {
-            td.remove()
-        }
-        const tdel=document.getElementById("label2")
-        if (tdel!=null)
-        {
-            tdel.remove()
-        }
+        // const td=document.getElementById("secondInput")
+        // if (td!=null)
+        // {
+        //     td.remove()
+        // }
+        // const tdel=document.getElementById("label2")
+        // if (tdel!=null)
+        // {
+        //     tdel.remove()
+        // }
         const to_del=document.getElementById("to")
         if (to_del!=null)
         {
@@ -40,7 +40,7 @@ export class connect4 extends Abstract_game_engine{
         {
             todel.remove()
         }
-        
+
         const to_be_del=document.getElementById("tablee")
         if (to_be_del!=null){
             to_be_del.remove()
@@ -48,9 +48,9 @@ export class connect4 extends Abstract_game_engine{
         const tbl = document.createElement("table");
         tbl.style='border:none';
         tbl.setAttribute("id","tablee");  // create table
-        const tblBody = document.createElement("tbody"); 
+        const tblBody = document.createElement("tbody");
         const row = document.createElement("tr");
-        for (let i = 0 ;i< state[0].length; i++){
+        for (let i = 0 ;i<7; i++){
             const cell = document.createElement("td");
             cell.style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #1f59df;background-color:#ffffff;';
             let ascii=i+97
@@ -59,65 +59,72 @@ export class connect4 extends Abstract_game_engine{
             row.appendChild(cell);
         }
         tblBody.appendChild(row);
-      
-        for (let i = 0; i <state.length  ; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara 
+
+        for (let i = 0; i <6 ; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara
             const row = document.createElement("tr");
             const cell=document.createElement("td");
-           
-            for (let j = 0; j < state[0].length; j++) { 
-               
+
+            for (let j = 0; j <7; j++) {
+
                 const cell = document.createElement("td");
                 cell.style=this.style;
-                
-                if (state[i][j]=='r')
+                console.log(state.board[i][j]) ;
+                if (state.board[i][j]=='r')
                     cell.style.backgroundColor="#f52b2b";
-                else if (state[i][j]=='y')
-                    cell.style.backgroundColor="#e1f52b";  
-               
+                else if (state.board[i][j]=='y')
+                    cell.style.backgroundColor="#e1f52b";
 
-                row.appendChild(cell); 
+
+                row.appendChild(cell);
             }
-            tblBody.appendChild(row);    
+            tblBody.appendChild(row);
         }
-        
-        tbl.appendChild(tblBody);// append table body to table nfso 
-        document.body.appendChild(tbl); // b append kol dah lel document 
+
+        tbl.appendChild(tblBody);// append table body to table nfso
+        document.body.appendChild(tbl); // b append kol dah lel document
         tbl.style="border-style:solid;background-color:#1f59df;border:10";
-       
+
+    }
+    InputMessage() {
+        return "Enter Input just the column ex: a"
     }
 
-    Controller (input)
+    Controller (state,input)
     {
-        this.ClearInput("firstInput");
+        // this.ClearInput("firstInput");
         if (!this.isValidLength(input,1)){
-            window.alert("INVALID INPUT!!");
-            // return ;
+            // window.alert("INVALID INPUT!!");
+            return null;
         }
+        // var column = input.charCodeAt(0) - 97;
         var column = input.charCodeAt(0) - 97;
+        console.log(column);
         var row;
-        if(!this.isCellInBounds(2,column)) {
-            window.alert("INVALID INPUT!!");
-            // return ;
+        if(!this.isCellInBounds(state.board,2,column)) {
+            // window.alert("INVALID INPUT!!");
+            return null;
         }
-           for(let i=0;i<6;i++)
-           {
-             if(this.board[i][column]==' ')
-             {
-              if(i==5 && this.board[i][column]==' ')
-               row=5
-             }
-            else{
-              row=i-1;
-             console.log(row);
-             break;
+        for(let i=0;i<6;i++)
+        {
+            if(state.board[i][column]==' ')
+            {
+                if(i==5 && state.board[i][column]==' ')
+                    row=5
             }
-           }
-            if(this.currentPlayer==1)
-                this.board[row][column]='r';
-            else
-                this.board[row][column]='y';
-            this.SwitchPlayers();
-            this.Drawer(this.board);
+            else{
+                row=i-1;
+                console.log(row);
+                break;
+            }
+        }
+        if(state.currentPlayer==1)
+            state.board[row][column]='r';
+        else
+            state.board[row][column]='y';
+        this.SwitchPlayers(state);
+        // this.Drawer(this.board);
+        return state
     }
+
 
 }

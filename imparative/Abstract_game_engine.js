@@ -9,30 +9,30 @@ export class  Abstract_game_engine {
 
     }
 
-     async Initialize() {
-         let board = this.createBoard()
-         console.log(board)
-         let currentPlayer = 1
-         let state={board,currentPlayer}
-         state.board=board
-         state.currentPlayer=currentPlayer
-         this.Drawer(state)
-         await this.sleep(1000)
+    async Initialize(theGame) {
+        let board = this.createBoard() //intial board
+        console.log(board)
+        let currentPlayer = 1
+        let state={board,currentPlayer}
+        state.board=board
+        state.currentPlayer=currentPlayer
+        this.Drawer(state)
+        await this.sleep(1000)
 
-         const loop = async () => {
-             await this.sleep(1000)
-             let new_state = this.Controller(state, this.takeUserInput());
-             console.table(state)
-             if (new_state != null) {
-                 this.Drawer(new_state)
-                 state=new_state
-             } else {
-                 alert("Invalid Move")
-             }
-             loop(); // Call the function again to repeat the loop
-         }
-         loop(); // Call the function to start the loop
-     }
+        const loop = async () => {
+            await this.sleep(1000)
+            let new_state = this.Controller(state, this.takeUserInput(theGame));
+            console.table(state)
+            if (new_state != null) {
+                this.Drawer(new_state)
+                state=new_state
+            } else {
+                alert("Invalid Move")
+            }
+            loop(); // Call the function again to repeat the loop
+        }
+        loop(); // Call the function to start the loop
+    }
 
 
     // Used in Constructor to create the game initial board (2D array) based on its type
@@ -41,7 +41,7 @@ export class  Abstract_game_engine {
     }
     Drawer(gameState) {
         throw new Error("Drawer method must be implemented");
-        
+
     }
     // takeUserInput1() {
     //     let input1 = document.getElementById("firstInput").value;
@@ -54,9 +54,12 @@ export class  Abstract_game_engine {
     // }
     takeUserInput()
     {
-       let input =prompt("Enter Input ")
-       return input
+        let input= prompt(this.InputMessage())
+        return input
 
+    }
+    InputMessage(){
+        throw new Error("InputMessage method must be implemented");
     }
     Controller(state,Input) {
         throw new Error("Controller method must be implemented");
@@ -75,7 +78,7 @@ export class  Abstract_game_engine {
         const Col = Input.toLowerCase().charCodeAt(1) - 97;
         return {Row,Col};
     }
-   
+
     isValidLength(Input,expectedLength){
         return Input.length === expectedLength;
     }
