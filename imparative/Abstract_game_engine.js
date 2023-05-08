@@ -5,24 +5,34 @@ export class  Abstract_game_engine {
             throw new TypeError("Cannot construct Abstract instances directly");
         }
 
-        this.board = this.createBoard();
-        this.rowNumbers=this.board.length;
-        this.colNumbers=this.board[0].length;
-        this.currentPlayer=1;
+
 
     }
 
-     Initialize() {
-        this.Drawer(this.board);
-        // const loop = () => {
-        //     this.takeUserInput().then(userInput => {
-        //         this.Controller(userInput);
-        //         this.Drawer(this.board);
-        //         loop(); // Call the function again to repeat the loop
-        //     });
-        // };
-        // loop(); // Call the function to start the loop
-    }
+     async Initialize() {
+         let board = this.createBoard()
+         console.log(board)
+         let currentPlayer = 1
+         let state={board,currentPlayer}
+         state.board=board
+         state.currentPlayer=currentPlayer
+         this.Drawer(state)
+         await this.sleep(1000)
+
+         const loop = async () => {
+             await this.sleep(1000)
+             let new_state = this.Controller(state, this.takeUserInput());
+             console.table(state)
+             if (new_state != null) {
+                 this.Drawer(new_state)
+                 state=new_state
+             } else {
+                 alert("Invalid Move")
+             }
+             loop(); // Call the function again to repeat the loop
+         }
+         loop(); // Call the function to start the loop
+     }
 
 
     // Used in Constructor to create the game initial board (2D array) based on its type
@@ -33,25 +43,27 @@ export class  Abstract_game_engine {
         throw new Error("Drawer method must be implemented");
         
     }
-    takeUserInput1() {
-        let input1 = document.getElementById("firstInput").value;
-        this.Controller(input1);
-    }
-    takeUserInput2() {
-        let input1 = document.getElementById("firstInput").value;
-        let input2 = document.getElementById("secondInput").value;
-        this.Controller(input1,input2);
-    }
+    // takeUserInput1() {
+    //     let input1 = document.getElementById("firstInput").value;
+    //     this.Controller(input1);
+    // }
+    // takeUserInput2() {
+    //     let input1 = document.getElementById("firstInput").value;
+    //     let input2 = document.getElementById("secondInput").value;
+    //     this.Controller(input1,input2);
+    // }
     takeUserInput()
     {
-        throw new Error("Controller method must be implemented");
+       let input =prompt("Enter Input ")
+       return input
+
     }
-    Controller(Input) {
+    Controller(state,Input) {
         throw new Error("Controller method must be implemented");
     }
 
-    SwitchPlayers(){
-        this.currentPlayer=!this.currentPlayer;
+    SwitchPlayers(state){
+        state.currentPlayer=!state.currentPlayer;
     }
 
     ClearInput(id){
@@ -70,11 +82,13 @@ export class  Abstract_game_engine {
     // isValidLength(Input1,expectedLength1,Input2,expectedLength2){
     //     return (Input1.length === expectedLength1 )&&(Input2.length === expectedLength2);
     // }
-    
 
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
-    isCellInBounds(row, col) {
-        return row >= 0 && row < this.rowNumbers && col >= 0 && col < this.colNumbers;
+    isCellInBounds(board,row, col) {
+        return row >= 0 && row < board.length && col >= 0 && col < board[0].length;
     }
     drawFisrtRow(style){
         for (let i = 0 ;i< state[0].length; i++){
