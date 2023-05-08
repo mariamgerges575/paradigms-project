@@ -19,8 +19,8 @@ class ChessGamee() {
   type Board=Array[Array[Int]]
   type state=(Board,currentPlayer)
 
-  val initChessBoard:()=>(Array[Array[Int]],Option[Int],Option[JLabel])={()=>
-    ( (Array.tabulate(8, 8)((i, j) => {
+  val initChessBoard:()=>(Array[Array[Int]],Option[Int])={()=>
+     (Array.tabulate(8, 8)((i, j) => {
       (i, j) match {
         case (0, 0) => 'r'
         case (0, 1) => 'n'
@@ -42,56 +42,9 @@ class ChessGamee() {
         case (7, 7) => 'R'
         case _ => ' '
       }
-    })),Some(1),Some(new JLabel()))
+    }),Some(1))
   }
-  def getPieceASCII(piece: Any): Char = {
-    if (piece == 'p')
-      return 9823
 
-    if (piece == 'P') {
-      return 9817
-    }
-    if (piece == 'n') {
-      return 9822
-    }
-    if (piece == 'N') {
-      return 9816
-    }
-    if (piece == 'x') {
-      return 9821
-    }
-    if (piece == 'X') {
-      return 9815
-    }
-    if (piece == 'q') {
-      return 9819
-    }
-    if (piece == 'Q') {
-      return 9813
-    }
-    if (piece == 'k') {
-      return 9818
-    }
-    if (piece == 'K') {
-      return 9812
-    }
-    if (piece == 'r') {
-      return 9820
-    }
-    if (piece == 'R') {
-      return 9814
-    }
-    if (piece == ' '||piece=='0'){
-      return 32
-    }
-    else{
-      piece match {
-        case s:Int=>s.toChar
-        case c:Char=>c
-        case _=>' '
-      }
-    }
-  }
 
   //DRAWER AND CONTROLLER//
   def controller(board: Board,Player:currentPlayer, fromString: String, toString: Option[String]): Option[(Board,currentPlayer)] = {
