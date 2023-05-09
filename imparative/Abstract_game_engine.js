@@ -5,8 +5,8 @@ export class  Abstract_game_engine {
         }
     }
 
-      async Initialize(theGame) {
-          let board = this.createBoard() //intial board
+      async Initialize() {
+          let board = this.createBoard() //initial board
           console.log(board)
           let currentPlayer = 1
           let state = {board, currentPlayer}
