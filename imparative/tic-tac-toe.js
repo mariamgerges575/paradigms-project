@@ -14,23 +14,14 @@ export class tic_tac_toe extends Abstract_game_engine {
     }
 /////////////////////////////////////////////////////////////////////////////////////
     Drawer(state){
-        // const to_del=document.getElementById("secondInput")
-        // if (to_del!=null)
-        // {
-        //     to_del.remove()
-        // }
-        // const todel=document.getElementById("label2")
-        // if (todel!=null)
-        // {
-        //     todel.remove()
-        // }
+     
         const to_be_del=document.getElementById("tablee")
         if (to_be_del!=null){
             to_be_del.remove()
         }
         const tbl = document.createElement("table");
         tbl.style='border:none';
-        tbl.setAttribute("id","tablee");  // create table
+        tbl.setAttribute("id","tablee"); 
         const tblBody = document.createElement("tbody"); 
         const row = document.createElement("tr");
         const cell = document.createElement("td");
@@ -47,7 +38,7 @@ export class tic_tac_toe extends Abstract_game_engine {
         }
         tblBody.appendChild(row);
       
-        for (let i = 0; i <3; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara 
+        for (let i = 0; i <3; i++) {
             const row = document.createElement("tr");
             const cell=document.createElement("td");
             cell.style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #000;background-color:#e0e0d8';
@@ -72,8 +63,8 @@ export class tic_tac_toe extends Abstract_game_engine {
             }
             tblBody.appendChild(row);    
         }
-        tbl.appendChild(tblBody);// append table body to table nfso
-        // document.getElementById("label1").innerHTML="To Cell :"
+        tbl.appendChild(tblBody);
+    
 
         if (this.currentPlayer==1){
             document.getElementById("turn").innerHTML=" Player X Turn";
@@ -83,16 +74,13 @@ export class tic_tac_toe extends Abstract_game_engine {
         tbl.style="border-style:solid;border-color:#000;border:10";
     }
 //////////////////////////////////////////////////////////////////////
-    // takeUserInput(){
-    //     this.takeUserInput1();
-    // }
+   
     InputMessage() {
         return "Enter Input to Cell ex: 1a "
     }
 //////////////////////////////////////////////////////////////////////////
     Controller(state,input)
     {
-        // this.ClearInput("firstInput");
         if(!this.isValidLength(input,2))
         {
         //  window.alert("INVALID INPUT!!");
@@ -114,7 +102,6 @@ export class tic_tac_toe extends Abstract_game_engine {
            else
              state.board[row][column]='⭕';
            this.SwitchPlayers(state);
-        //    this.Drawer(state.board);
         return state
        }
        else

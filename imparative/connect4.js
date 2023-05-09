@@ -16,9 +16,7 @@ export class connect4 extends Abstract_game_engine{
      ];
         return state;
     }
-    // takeUserInput(){
-    //     this.takeUserInput1();
-    // }
+    
     Drawer(state){
     
         const to_del=document.getElementById("to")
@@ -51,7 +49,7 @@ export class connect4 extends Abstract_game_engine{
         }
         tblBody.appendChild(row);
       
-        for (let i = 0; i <6 ; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara 
+        for (let i = 0; i <6 ; i++) {
             const row = document.createElement("tr");
             const cell=document.createElement("td");
            
@@ -71,8 +69,8 @@ export class connect4 extends Abstract_game_engine{
             tblBody.appendChild(row);    
         }
         
-        tbl.appendChild(tblBody);// append table body to table nfso 
-        document.body.appendChild(tbl); // b append kol dah lel document 
+        tbl.appendChild(tblBody); 
+        document.body.appendChild(tbl); 
         tbl.style="border-style:solid;background-color:#1f59df;border:10";
        
     }
@@ -82,12 +80,11 @@ export class connect4 extends Abstract_game_engine{
 
     Controller (state,input)
     {
-        // this.ClearInput("firstInput");
+        
         if (!this.isValidLength(input,1)){
             // window.alert("INVALID INPUT!!");
             return null;
         }
-        // var column = input.charCodeAt(0) - 97;
         var column = input.charCodeAt(0) - 97;
         console.log(column);
         var row;

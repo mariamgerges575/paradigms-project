@@ -113,7 +113,7 @@ def chessController(gameState: GameState, input: String): Option[GameState] = {
     val fromCol = arrInput(1)
     val toRow = arrInput(2)
     val toCol = arrInput(3)
-    val newState = (gameState._1, switchPlayers(gameState._2))
+    val newState = (gameState._1.clone(), switchPlayers(gameState._2))
     newState._1(toRow)(toCol) = newState._1(fromRow)(fromCol)
     newState._1(fromRow)(fromCol) = ' '
 
@@ -270,7 +270,7 @@ def tictactoeController(gameState: GameState, input: String): Option[GameState] 
   }
 
   def applyMoveTT(gameState: GameState, row: Int, col: Int): GameState = {
-    var newState: GameState = (gameState._1, switchPlayers(gameState._2))
+    var newState: GameState = (gameState._1.clone(), switchPlayers(gameState._2))
     if (gameState._2.getOrElse(-1) == 1) newState._1(row)(col) = '❌' else newState._1(row)(col) = '⭕'
     newState
   }

@@ -26,8 +26,3 @@ function chosenGame(game)
     }
     
 }
-// function printmariom()
-// {
-//  console.log(localStorage.getItem(choose));
-
-// }

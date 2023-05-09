@@ -5,7 +5,7 @@ import { Checkers } from "./Checker.js";
 import { Chess } from "./Chess.js";
 import { connect4 } from "./connect4.js";
 import {sudoku} from "./sudoku.js";
-// console.log(localStorage.getItem("choose"));
+
 var gamee;
 var butt=document.getElementById("but");
 switch(localStorage.getItem("choose"))

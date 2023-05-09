@@ -2,26 +2,14 @@
 import { Abstract_game_engine } from "./Abstract_game_engine.js";
 import { SudokuG } from "./SudokuG.js";
 export class sudoku extends Abstract_game_engine {
-    
-
-    //style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #000;background-color:#ffffff;border-style:solid;border-color:#000;border:0';
+        
     constructor(){
         super();
-        // this.initianList=[
-        //     [' ','5','7',' ','6', ' ',' ','1', ' ' ],
-        //     ['8',' ','6','2',' ', '5',' ',' ', '9' ],
-        //     [' ','4',' ',' ',' ', ' ',' ',' ', '6' ],
-        //     [' ','2','4','3','5', ' ',' ',' ', ' ' ],
-        //     [' ',' ',' ',' ','1', '2',' ',' ', '5' ],
-        //     ['5','3',' ',' ',' ', ' ',' ','7', '2' ],
-        //     [' ',' ',' ','1',' ', ' ','9','6', ' ' ],
-        //     [' ',' ',' ','6',' ', ' ',' ',' ', ' ' ],
-        //     ['1','6','9','5','7', '3',' ',' ', ' ' ]
-        // ];
+      
     }
 
     createBoard(){
-        //there should be sudoku generator
+       
         let state= new SudokuG(30).generate().getBoard()
         for(let i=0;i<9;i++){
             for(let j=0;j<9;j++){
@@ -34,9 +22,7 @@ export class sudoku extends Abstract_game_engine {
         return state;
         return state;
     }
-    // takeUserInput() {
-    //    this.takeUserInput2();
-    // }
+   
     Drawer(state){
 
         const to_be_del=document.getElementById("tablee")
@@ -45,7 +31,7 @@ export class sudoku extends Abstract_game_engine {
         }
         const tbl = document.createElement("table");
         tbl.style='border:none';
-        tbl.setAttribute("id","tablee");  // create table
+        tbl.setAttribute("id","tablee");  
         const tblBody = document.createElement("tbody"); 
         const row = document.createElement("tr");
         const cell = document.createElement("td");
@@ -62,7 +48,7 @@ export class sudoku extends Abstract_game_engine {
         }
         tblBody.appendChild(row);
       
-        for (let i = 0; i <9 ; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara 
+        for (let i = 0; i <9 ; i++) {
             const row = document.createElement("tr");
             const cell=document.createElement("td");
             cell.style='height:55px;width:55px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #000;background-color:#56829a';
@@ -89,41 +75,31 @@ export class sudoku extends Abstract_game_engine {
                cell.innerHTML=state.board[i][j];
                }
 
-               
-            
-
                 row.appendChild(cell); 
             }
             tblBody.appendChild(row);    
         }
-        tbl.appendChild(tblBody);// append table body to table nfso
+        tbl.appendChild(tblBody);
 
         const newtable=document.createElement("table")
         const newtablebody=document.createElement("tbody")
         const R=document.createElement("tr");
         R.appendChild(tbl)
-        R.appendChild(tbl)
-
-        
-
-        // document.getElementById("label1").innerHTML="To Cell :"
-
-      
-        document.body.appendChild(tbl); // b append kol dah lel document 
+        R.appendChild(tbl)      
+        document.body.appendChild(tbl); 
         tbl.style="border-style:solid;border-color:#000;border:10";
     }
     InputMessage() {
         return "Enter Input position and value ex: 1a 2"
     }
-    Controller(state,input) { //c is char
-        let str=input.split(" ")  ////////
-        var position=str[0]//////////////
+    Controller(state,input) {
+        let str=input.split(" ")  
+        var position=str[0]
         var value=str[1]
-        value = parseInt(value); //momkn mtb2ash number
+        value = parseInt(value); 
         if (!this.isValidLength(str, 2) || isNaN(value) || this.FindRowCol(str[0]) === null){
             return null;
         }
-
         const {Row, Col} = this.FindRowCol(position)
         if (this.isCellInBounds(state.board,9, 9)) {
             return null;
@@ -137,7 +113,6 @@ export class sudoku extends Abstract_game_engine {
             return state
         }
            
-
         for (let i = 0; i < 9; i++) {
                 if ((state.board[Row][i] == value || state.board[Row][i]-10== value)|| 
                 state.board[i][Col] == value || state.board[i][Col]-10== value) {
@@ -146,9 +121,6 @@ export class sudoku extends Abstract_game_engine {
             }
             state.board[Row][Col] = value; 
             return state
- 
-       
-        
     }
 }
 // c=new sudoku();

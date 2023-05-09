@@ -383,7 +383,5 @@ export class Chess extends Abstract_game_engine{
             return true;} } }
 
 // const chessGame=new Chess();
-// console.log(chessGame.board);
-// console.log(chessGame.currentPlayer);
 // chessGame.Initialize();
-// document.getElementById("Move").addEventListener("click",chessGame.makeMove)
+

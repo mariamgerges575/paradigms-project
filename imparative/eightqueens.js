@@ -21,16 +21,7 @@ export class  eightQueens extends Abstract_game_engine{
 /////////////////////////////////////////////////////////////////////////////////////
     Drawer(state){
         console.log("ana fy eldrawer")
-        // const to_del=document.getElementById("secondInput")
-        // if (to_del!=null)
-        // {
-        //     to_del.remove()
-        // }
-        // const todel=document.getElementById("label2")
-        // if (todel!=null)
-        // {
-        //     todel.remove()
-        // }
+       
         console.log("ana fy eldrawer2")
         
         const to_be_del=document.getElementById("tablee")
@@ -56,7 +47,7 @@ export class  eightQueens extends Abstract_game_engine{
         }
         tblBody.appendChild(row);
       
-        for (let i = 0; i <8 ; i++) {// hlf 3la rows el state w el columns kol mara h create row w h3ml append kol mara 
+        for (let i = 0; i <8 ; i++) {
             const row = document.createElement("tr");
             const cell=document.createElement("td");
             cell.style='height:60px;width:60px;margin:1px;vertical-align: middle;text-align:center;font-size: 25px;box-shadow: #000;background-color:#e0e0d8';
@@ -82,31 +73,27 @@ export class  eightQueens extends Abstract_game_engine{
             tblBody.appendChild(row);    
         }
         
-        tbl.appendChild(tblBody);// append table body to table nfso
-        // document.getElementById("label1").innerHTML="To Cell :"
+        tbl.appendChild(tblBody);
         document.getElementById("turn").innerHTML="";
-        document.body.appendChild(tbl); // b append kol dah lel document 
+        document.body.appendChild(tbl); 
         tbl.style="border-style:solid;border-color:#000;border:10";
        
     }
 ///////////////////////////////////////////////////////////////////////////////////////////////
-    // takeUserInput(){
-    //     this.takeUserInput1();
-    // }
+   
     InputMessage() {
         return "Enter  Input to Cell ex: 3d "
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////
     Controller(state,input)
     {
-        // this.ClearInput("firstInput");
+    
        console.log(input);
        if(!this.isValidLength(input,2))
        {
         // window.alert("INVALID INPUT!!");
         return null ;
        }
-    //    const {row,column}=this.FindRowCol(input);
     const r=this.FindRowCol(input);
       let row=r.Row
       let column=r.Col;
