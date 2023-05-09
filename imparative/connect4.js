@@ -20,16 +20,7 @@ export class connect4 extends Abstract_game_engine{
     //     this.takeUserInput1();
     // }
     Drawer(state){
-        // const td=document.getElementById("secondInput")
-        // if (td!=null)
-        // {
-        //     td.remove()
-        // }
-        // const tdel=document.getElementById("label2")
-        // if (tdel!=null)
-        // {
-        //     tdel.remove()
-        // }
+    
         const to_del=document.getElementById("to")
         if (to_del!=null)
         {
@@ -100,30 +91,25 @@ export class connect4 extends Abstract_game_engine{
         var column = input.charCodeAt(0) - 97;
         console.log(column);
         var row;
-        if(!this.isCellInBounds(state.board,2,column)) {
-            // window.alert("INVALID INPUT!!");
-             return null;
-        }
-           for(let i=0;i<6;i++)
-           {
-             if(state.board[i][column]==' ')
-             {
-              if(i==5 && state.board[i][column]==' ')
-               row=5
-             }
-            else{
-              row=i-1;
-             console.log(row);
-             break;
+        if(!this.isCellInBounds(state.board,2,column)) return null;
+        
+        if(state.board[0][column]!=' ') return null;
+       
+        for(let i=5;i>=0;i--)
+        {
+            if(state.board[i][column]==' ')
+            {
+                row=i;
+                break;
             }
-           }
-            if(state.currentPlayer==1)
-                state.board[row][column]='r';
-            else
-                state.board[row][column]='y';
-            this.SwitchPlayers(state);
-            // this.Drawer(this.board);
-            return state
+        }
+        if(state.currentPlayer==1)
+            state.board[row][column]='r';
+        else
+            state.board[row][column]='y';
+
+        this.SwitchPlayers(state);
+        return state
     }
    
 
