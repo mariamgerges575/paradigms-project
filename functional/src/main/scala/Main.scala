@@ -4,24 +4,6 @@ import scala.io.StdIn
 
 object Main extends App {
 
-
-    //  ////////////////TEST chess///////////////////////////////////////
-
-    //
-    //  ////////////////TEST CONNECT4///////////////////////////////////
-    //  gameEngine(connect4Drawer,initConnect4Board,connect4Controller)
-    //
-    //  //////////////Test 8qs///////////////////////////////////////////
-    //  gameEngine(eightQueensDrawer,init8QsBoard,eightQueensController)
-    //
-    //  ///////////////////////Test tic tac toe////////////////////////////
-    //  gameEngine(ticTacToeDrawer, initTTTBoard, tictactoeController)
-    //
-    //  ////////////////////////TEST CHECKERS//////////////////////////////
-    //  gameEngine(checkersDrawer,initCheckerState,checkersController)
-
-    //  ///////////////////////TEST SUDOKU /////////////////////////////////
-    //  gameEngine(sudokuDrawer,initSudokuState,sudokuController)
     def initialScreen(): Unit = {
         println("CHOOSE GAME :")
         println("1.Chess")
@@ -48,5 +30,7 @@ object Main extends App {
         }
     }
     initialScreen()
+
+
 
 }
