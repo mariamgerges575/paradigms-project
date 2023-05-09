@@ -1,6 +1,6 @@
 // import { stat } from "fs";
 import { Abstract_game_engine } from "./Abstract_game_engine.js";
-
+import { SudokuG } from "./SudokuG.js";
 export class sudoku extends Abstract_game_engine {
     
 
@@ -22,17 +22,16 @@ export class sudoku extends Abstract_game_engine {
 
     createBoard(){
         //there should be sudoku generator
-        let state=[
-            [0,15,17,0,16,0,0,11,0],
-            [18,0,16,12,0,15,0,0,19],
-            [0,14,0,0,0,0,0,0,16],
-            [0,12,14,13,15,0,0,0,0 ],
-            [0,0,0,0,11,12,0,0,15],
-            [15,13,0,0,0,0,0,17,12],
-            [0,0,0,11,0,0,19,16,0],
-            [0,0,0,16,0,0,0,0,0],
-            [11,16,19,15,17,13,0,0,0]
-        ];
+        let state= new SudokuG(30).generate().getBoard()
+        for(let i=0;i<9;i++){
+            for(let j=0;j<9;j++){
+    
+                if(state[i][j]!=0)
+                    state[i][j]+=10
+            }
+        }
+        console.log(state)
+        return state;
         return state;
     }
     // takeUserInput() {
