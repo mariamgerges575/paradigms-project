@@ -293,7 +293,7 @@ export class Chess extends Abstract_game_engine{
             return false;
         }
         else if(fromRow===1|| fromRow===6){
-            if(toRow===fromRow+1|| toRow===fromRow+2 || toRow===fromRow-1|| toRow===fromRow-2 ){
+            if(toRow===fromRow+1|| (toRow===fromRow+2 && state.board[fromRow+1][toCol]==" ") || toRow===fromRow-1|| (toRow===fromRow-2 &&state.board[fromRow-1][toCol]==" ") ){
                 return true;
             }
             return false;

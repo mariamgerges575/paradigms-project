@@ -13,46 +13,33 @@ switch(localStorage.getItem("choose"))
     case 'eightqueens':
     {
         gamee=new eightQueens ();
-
         break;
     }
     case 'sudoku':
     {
         gamee=new  sudoku();
-
         break;
     }
     case 'checkers':
     {
         gamee=new Checkers ();
-
         break;
     }
     case 'connect4':
     {
         gamee=new connect4();
-
         break;
     }
     case 'tictactoe':
     {
         gamee=new tic_tac_toe();
-
-
-
-
         break;
     }
     case 'chess':
     {
         gamee=new Chess ();
-
         break;
     }
-
-
-
-
 }
 gamee.Initialize()
 
