@@ -1,9 +1,7 @@
-import gameEngine.GameState
 
 import scala.collection.mutable.Set
 import scala.util.Random
 
-class InitialBoards() {
   val initCheckerState:()=>(GameState)=()=>(Array(
     Array(-1, 1,-1, 1,-1, 1,-1, 1),
     Array( 1,-1, 1,-1, 1,-1, 1,-1),
@@ -15,7 +13,7 @@ class InitialBoards() {
     Array(0,-1, 0,-1, 0,-1, 0,-1)),Some(1))
 
   val initSudokuState:()=>(GameState)=()=>{
-    def remove(a: Array[Array[Int]], count: Int) {
+    def remove(a: Array[Array[Int]], count: Int) ={
       val rs = Random.shuffle(List.range(0, 81))
       for (i <- 0 until count)
         a(rs(i) / 9)(rs(i) % 9) = 0
@@ -31,7 +29,7 @@ class InitialBoards() {
         if (a(x)(y) != 0)
           setExist(a(x)(y), x, y)
 
-      def setExist(v: Int, x: Int, y: Int) {
+      def setExist(v: Int, x: Int, y: Int)= {
         r(x) += v
         c(y) += v
         z(x / 3)(y / 3) += v
@@ -57,12 +55,12 @@ class InitialBoards() {
                 r(x) -= v
                 c(y) -= v
                 z(x / 3)(y / 3) -= v
-                current
+                current()
               }
             }
           }
 
-          current
+          current()
         }
         else if (y < 8) fill(x, y + 1) else if (x < 8) fill(x + 1, 0) else true
       }
@@ -113,7 +111,7 @@ class InitialBoards() {
         case _ => ' '
       }
     }),Some(0))
-  }
+
 
 
 }

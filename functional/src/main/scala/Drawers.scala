@@ -1,12 +1,6 @@
+
 import java.awt.{Color, Dimension, Font, GridLayout, Window}
 import javax.swing.{AbstractAction, BorderFactory, JButton, JFrame, JLabel, JOptionPane, JPanel, JTextField, SwingConstants}
-
-class Drawers() {
-
-  type currentPlayer = Option[Int]
-  type Board = Array[Array[Int]]
-  type GameState = (Board, currentPlayer)
-
 
   def removeFrameContent(title: String): JFrame = {
     var frame: JFrame = null
@@ -289,5 +283,5 @@ class Drawers() {
     frame.add(panel, "Center")
     frame.setSize(70 * state._1.length, 70 * state._1(0).length + 10)
     frame.setVisible(true)
-  }
+
 }
