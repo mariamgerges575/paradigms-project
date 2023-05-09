@@ -56,8 +56,8 @@ export class Chess extends Abstract_game_engine{
             tblBody.appendChild(row);
         }
         tbl.appendChild(tblBody);
-        document.getElementById("label1").innerHTML="From Cell :"
-        document.getElementById("label2").innerHTML="To   Cell :"
+        // document.getElementById("label1").innerHTML="From Cell :"
+        // document.getElementById("label2").innerHTML="To   Cell :"
         if (state.currentPlayer==1){
             document.getElementById("turn").innerHTML="WHITE Player Turn";
         }
@@ -155,6 +155,9 @@ export class Chess extends Abstract_game_engine{
 
 
     }
+    InputMessage() {
+        return "Enter Input from and to cell ex: 2a 3a"
+    }
 
     applyMove(state,move) {
         // TODO: implement logic for applying chess moves
@@ -180,14 +183,14 @@ export class Chess extends Abstract_game_engine{
     
     Controller(state,Input) {
         // Get the user input for the move
-        let str=Input.split(" ")
-        if(!this.isValidLength(str,2)){return null}
-        const fromCell=str[0]
+        let str=Input.split(" ")  ////////
+        if(!this.isValidLength(str,2)){return null}////////
+        const fromCell=str[0]//////////////
         const toCell=str[1]
         console.log(fromCell);
         console.log(toCell);
-        this.ClearInput('firstInput');
-        this.ClearInput('secondInput');
+        // this.ClearInput('firstInput');
+        // this.ClearInput('secondInput');
         // Convert the user input to the corresponding row and column indices
         let fromMove = this.FindRowCol(fromCell);
         let fromRow=fromMove.Row;

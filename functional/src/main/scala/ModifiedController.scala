@@ -19,6 +19,9 @@ class ChessGamee() {
   type Board=Array[Array[Int]]
   type state=(Board,currentPlayer)
 
+
+
+
   val initChessBoard:()=>(Array[Array[Int]],Option[Int])={()=>
      (Array.tabulate(8, 8)((i, j) => {
       (i, j) match {

@@ -9,8 +9,8 @@ export class  Abstract_game_engine {
 
     }
 
-     async Initialize() {
-         let board = this.createBoard()
+     async Initialize(theGame) {
+         let board = this.createBoard() //intial board
          console.log(board)
          let currentPlayer = 1
          let state={board,currentPlayer}
@@ -21,7 +21,7 @@ export class  Abstract_game_engine {
 
          const loop = async () => {
              await this.sleep(1000)
-             let new_state = this.Controller(state, this.takeUserInput());
+             let new_state = this.Controller(state, this.takeUserInput(theGame));
              console.table(state)
              if (new_state != null) {
                  this.Drawer(new_state)
@@ -54,9 +54,12 @@ export class  Abstract_game_engine {
     // }
     takeUserInput()
     {
-       let input =prompt("Enter Input ")
-       return input
+        let input= prompt(this.InputMessage())
+        return input
 
+    }
+    InputMessage(){
+        throw new Error("InputMessage method must be implemented");
     }
     Controller(state,Input) {
         throw new Error("Controller method must be implemented");

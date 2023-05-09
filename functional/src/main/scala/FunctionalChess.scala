@@ -168,8 +168,6 @@ class ChessGame() {
       case false => None
       case true =>
         ApplyMove(gameState,ParsedInput(fromString, toString)._1, ParsedInput(fromString, toString)._2)
-
-
     }
 
 
