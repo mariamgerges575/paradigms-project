@@ -52,7 +52,5 @@ switch(localStorage.getItem("choose"))
 
 }
 console.log(localStorage.getItem("choose"));
-   
-    // butt.addEventListener("click",gamee.takeUserInput)  ;
     butt.addEventListener("click",function(){
     gamee.takeUserInput()});
