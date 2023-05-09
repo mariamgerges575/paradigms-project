@@ -116,58 +116,38 @@ export class sudoku extends Abstract_game_engine {
         return "Enter Input position and value ex: 1a 2"
     }
     Controller(state,input) { //c is char
-        // console.log(position)
-        let i = 0;
-        let j = 0;
-        let valid = 1
         let str=input.split(" ")  ////////
         var position=str[0]//////////////
         var value=str[1]
         value = parseInt(value); //momkn mtb2ash number
         if (!this.isValidLength(str, 2) || isNaN(value) || this.FindRowCol(str[0]) === null){
-            // window.alert("mistake in input")
             return null;
         }
 
         const {Row, Col} = this.FindRowCol(position)
-
-
         if (this.isCellInBounds(state.board,9, 9)) {
-            // window.alert("out of bounds")
             return null;
         }
-        console.log(Row);
-        console.log(Col);
         if(state.board[Row][Col]>9) {
             // window.alert("can't edit this cell")
             return null
         }
-        if(state.board[Row][Col]===value) 
-           state.board[Row][Col]=0
-
-    console.log(Row);
-    console.log(Col);
+        if(state.board[Row][Col]==value) {
+            state.board[Row][Col]=0
+            return state.board
+        }
+           
 
         for (let i = 0; i < 9; i++) {
-            for (let j = 0; j < 9; j++) {
-                if ((state.board[i][j] == value || state.board[i][j]-10== value)&& (i === Row || Col === j)) {
-                    console.log(state.board[i][j] === value )
-                    console.log(state.board[i][j]%10+1=== value )
-                    console.log((i === Row || Col === j))
-                    console.log(Row,Col)
-                    // window.alert("cant put this value here")
-                    valid = 0;
-                    break;
+                if ((state.board[Row][i] == value || state.board[Row][i]-10== value)|| 
+                state.board[i][Col] == value || state.board[i][Col]-10== value) {
+                    return null
                 }
             }
-        }
-        if (valid) {
             state.board[Row][Col] = value; 
             return state
  
-        }
-        else 
-        return null
+       
         
     }
 }
