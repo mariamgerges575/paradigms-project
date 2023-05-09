@@ -13,32 +13,32 @@ switch(localStorage.getItem("choose"))
     case 'eightqueens':
     {
         gamee=new eightQueens ();
-        gamee.Initialize();
+
         break;
     }
     case 'sudoku':
     {
         gamee=new  sudoku();
-        gamee.Initialize();
+
         break;
     }
     case 'checkers':
     {
         gamee=new Checkers ();
-        gamee.Initialize();
+
         break;
     }
     case 'connect4':
     {
         gamee=new connect4();
-        gamee.Initialize();
+
         break;
     }
     case 'tictactoe':
     {
         gamee=new tic_tac_toe();
-        console.log("hoho");
-        gamee.Initialize();
+
+
 
 
         break;
@@ -46,12 +46,15 @@ switch(localStorage.getItem("choose"))
     case 'chess':
     {
         gamee=new Chess ();
-        gamee.Initialize();
+
         break;
     }
 
 
+
+
 }
+gamee.Initialize()
 
 console.log(localStorage.getItem("choose"));
     butt.addEventListener("click",function(){
