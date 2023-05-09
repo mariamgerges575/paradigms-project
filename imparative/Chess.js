@@ -120,7 +120,7 @@ export class Chess extends Abstract_game_engine{
         }
 
         // Check if the destination cell is not occupied by a piece of the same color
-        if (this.getPieceColor(state.board[toRow][toCol]) === state.currentPlayer) {
+        if (this.getPieceColor(state.board[toRow][toCol]) == state.currentPlayer) {
             console.log("e2");
             return false;
         }
@@ -229,7 +229,7 @@ export class Chess extends Abstract_game_engine{
 
     // Helper functions for checking piece color and checking if a cell is within bounds
     getPieceColor(piece) {
-        if (piece === ' ') {
+        if (piece == ' ') {
             return null;
         } else if (piece.toUpperCase() === piece) {
             return 1;
