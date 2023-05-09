@@ -1,5 +1,8 @@
 import gameEngine.GameState
 
+import scala.collection.mutable.Set
+import scala.util.Random
+
 class InitialBoards() {
   val initCheckerState:()=>(GameState)=()=>(Array(
     Array(-1, 1,-1, 1,-1, 1,-1, 1),
@@ -11,17 +14,74 @@ class InitialBoards() {
     Array(-1, 0,-1, 0,-1, 0,-1, 0),
     Array(0,-1, 0,-1, 0,-1, 0,-1)),Some(1))
 
-  val initSudokuState:()=>(GameState)=()=>(Array(
-    Array(0,15,17,0,16, 0,0,11,0),
-    Array(18,0,16,12,0, 15,0,0, 17),
-    Array(0,14,0,0,0,0,0,0, 16),
-    Array(0,12,14,13,15,0,0,0,0),
-    Array(0,0,0,0,11, 12,0,0, 15),
-    Array(15,13,0,0,0,0,0,17, 12),
-    Array(0,0,0,11,0,0,19,16,0),
-    Array(0,0,0,16,0,0,0,0,0),
-    Array(11,16,19,15,17,13,0,0,0),
-  ),None)
+  val initSudokuState:()=>(GameState)=()=>{
+    def remove(a: Array[Array[Int]], count: Int) {
+      val rs = Random.shuffle(List.range(0, 81))
+      for (i <- 0 until count)
+        a(rs(i) / 9)(rs(i) % 9) = 0
+    }
+    def generate():Array[Array[Int]] ={
+      val a:Array[Array[Int]]=Array.fill(9, 9)(0)
+
+      val r = Array.fill(9)(Set[Int]())
+      val c = Array.fill(9)(Set[Int]())
+      val z = Array.fill(3, 3)(Set[Int]())
+
+      for (x <- 0 to 8; y <- 0 to 8)
+        if (a(x)(y) != 0)
+          setExist(a(x)(y), x, y)
+
+      def setExist(v: Int, x: Int, y: Int) {
+        r(x) += v
+        c(y) += v
+        z(x / 3)(y / 3) += v
+      }
+
+      def fill(x: Int, y: Int): Boolean = {
+        if (a(x)(y) == 0) {
+          val candidates = Set() ++ (1 to 9) -- r(x) -- c(y) -- z(x / 3)(y / 3)
+
+          def current(): Boolean = {
+            if (candidates.isEmpty)
+              false
+            else {
+              val v = Random.shuffle(candidates.toList).iterator.next
+              candidates -= v
+              a(x)(y) = v
+              setExist(v, x, y)
+              val good = if (y < 8) fill(x, y + 1) else if (x < 8) fill(x + 1, 0) else true
+              if (good)
+                true
+              else {
+                a(x)(y) = 0
+                r(x) -= v
+                c(y) -= v
+                z(x / 3)(y / 3) -= v
+                current
+              }
+            }
+          }
+
+          current
+        }
+        else if (y < 8) fill(x, y + 1) else if (x < 8) fill(x + 1, 0) else true
+      }
+
+      fill(0, 0)
+      a
+    }
+    val puzzle :Array[Array[Int]]=generate()
+    // create a puzzle by remove a number of cells
+    remove(puzzle, 60);
+    for(i<-0 to 8) {
+            for (j <- 0 to 8) {
+              if(puzzle(i)(j)!=0) puzzle(i)(j)+=10
+            }
+    }
+
+    (puzzle,None)
+  }
+
 
   val initTTTBoard:()=>(GameState)=()=> (Array.fill(3,3)(' '),Some(1))
 
@@ -54,4 +114,6 @@ class InitialBoards() {
       }
     }),Some(0))
   }
+
+
 }
