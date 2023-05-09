@@ -134,7 +134,7 @@ export class sudoku extends Abstract_game_engine {
         }
         if(state.board[Row][Col]==value) {
             state.board[Row][Col]=0
-            return state.board
+            return state
         }
            
 

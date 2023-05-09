@@ -21,8 +21,9 @@ export class  Abstract_game_engine {
               let new_state = this.Controller(state, input);
               console.table(state)
               if (new_state != null) {
-                  this.Drawer(new_state)
-                  state = new_state
+                this.Drawer(new_state)
+                state = new_state
+                  
               } else {
                   alert("Invalid Move")
               }
