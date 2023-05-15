@@ -203,7 +203,7 @@ import javax.swing.{AbstractAction, BorderFactory, JButton, JFrame, JLabel, JOpt
         }
       )
     })
-    val currentPlayer = if (state._2.getOrElse(-1) == 0) " RED " else " YELLOW "
+    val currentPlayer = if (state._2.getOrElse(-1) == 0) " YELLOW " else " RED "
     val lbl = new JLabel(currentPlayer + " player turn", SwingConstants.CENTER)
     lbl.setFont(new Font("Verdana", Font.PLAIN, 18))
     lbl.setPreferredSize(new Dimension(80 * state._1.length, 50))

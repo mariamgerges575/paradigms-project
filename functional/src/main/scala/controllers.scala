@@ -161,7 +161,7 @@ def checkersController(gameState: GameState, input: String): Option[GameState] =
 
   def isValidMove(gameState: GameState, arrInput: Array[Int]): Boolean = {
     //returns true if the piece belongs to the current player
-    def isCurrentPlayer(piece: Int): Boolean = (piece % 2) == gameState._2.getOrElse(-1)
+    def isCurrentPlayer(gameState: GameState,piece: Int): Boolean = (piece % 2) == gameState._2.getOrElse(-1)
 
     val fromRow = arrInput(0)
     val fromCol = arrInput(1)
@@ -169,7 +169,7 @@ def checkersController(gameState: GameState, input: String): Option[GameState] =
     val toCol = arrInput(3)
     val piece: Int = gameState._1(fromRow)(fromCol);
     // Check if the piece belongs to the current player
-    if (!isCurrentPlayer(piece)) {
+    if (!isCurrentPlayer(gameState, piece)) {
       //          println("not your piece!");
       return false;
     }
@@ -194,7 +194,9 @@ def checkersController(gameState: GameState, input: String): Option[GameState] =
     if (Math.abs(hSteps) == 2) {
       //check that the in-between piece belongs to the enemy
       val inBetweenPiece = gameState._1(fromRow + (vSteps / 2))(fromCol + (hSteps / 2));
-      if (isCurrentPlayer(inBetweenPiece)) {
+      if (inBetweenPiece==' ')
+        return false
+      if (isCurrentPlayer(gameState,inBetweenPiece)) {
         //            println("attempt to kill your self")
         return false
       }

@@ -93,9 +93,11 @@ export class Checkers extends Abstract_game_engine{
                 // else
                 //     this.deads1++
                 if(!bool)
+                    // state.currentPlayer!=state.currentPlayer
                     this. SwitchPlayers(state)
             }
             else
+                //  state.currentPlayer!=state.currentPlayer
                 this.SwitchPlayers(state)
             
             // this.Drawer(state.board)
@@ -125,7 +127,7 @@ export class Checkers extends Abstract_game_engine{
         //it gets all possible jumps for all the pieces of the currentplayer
         let jumpMoves=[];        
         let start=0,count=0
-        if (this.currentPlayer==0){
+        if (state.currentPlayer==0){
             start=-7
         }
         for (let i = start ; i <start+8; i++){
@@ -189,14 +191,14 @@ export class Checkers extends Abstract_game_engine{
 
 
             console.log("not your piece!");
-            // alert("not your piece!!!")
+            alert("not your piece!!!")
             return false;
         }
 
         // Check if the destination cell is not occupied
         if ((state.board[toRow][toCol]) != -1) {
             console.log("not empty place");
-            // alert("place not empty!!!")
+            alert("place not empty!!!")
             return false;
         }
         //get the horizontal and vertical offsets
@@ -205,22 +207,24 @@ export class Checkers extends Abstract_game_engine{
         //check that the offsets are equal and <=2
         if (Math.abs(hSteps)>2 || Math.abs(vSteps)>2 || Math.abs(hSteps)!=Math.abs(vSteps)){
             console.log("step>2 or not moving in diagonal")
-            // alert("invalid input")
+            alert("invalid input")
             return false
         }
         //check if an unkinged piece is trying to move backward
-        if ((vSteps<0 && piece<2 && this.currentPlayer==1)||(vSteps>0 && piece<2 && this.currentPlayer==0) ){
+        if ((vSteps<0 && piece<2 && state.currentPlayer==1)||(vSteps>0 && piece<2 && state.currentPlayer==0) ){
             console.log("unkinged moving backward!!")
-            // alert("unkinged piece moving backward!!")
+            alert("unkinged piece moving backward!!")
             return false
         }
         
         if (Math.abs(hSteps)==2){
             //check that the in-between piece belongs to the enemy
             let inBetweenPiece=state.board[fromRow+(vSteps/2)][fromCol+(hSteps/2)];
+            if (inBetweenPiece==-1)
+                return false;
             if (this.isCurrentPlayer(state,inBetweenPiece)){
                 console.log("attempt to kill your self")
-                // alert("attempt to kill your self")
+                alert("attempt to kill your self")
                 return false
             }
             
@@ -232,7 +236,7 @@ export class Checkers extends Abstract_game_engine{
             console.log(jumpMoves)
             if (bool){
                 console.log("there is a jump!")
-                // alert("there is a jump!")
+                alert("there is a jump!")
             }
             return !bool
             
@@ -308,7 +312,7 @@ export class Checkers extends Abstract_game_engine{
         tbl.appendChild(tblBody);
         // document.getElementById("label1").innerHTML="From Cell :"
         // document.getElementById("label2").innerHTML="To   Cell :"
-        if (this.currentPlayer==0){
+        if (state.currentPlayer==0){
             document.getElementById("turn").innerHTML="WHITE Player Turn";
         }
         else { document.getElementById("turn").innerHTML="BLACK Player Turn";}
