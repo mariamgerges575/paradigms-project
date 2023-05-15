@@ -238,7 +238,7 @@ def checkersController(gameState: GameState, input: String): Option[GameState] =
 def sudokuController(gameState: GameState, input: String): Option[GameState] = {
 
   def isValidGame(gameState: GameState, r: Int, c: Int, value: Int): Boolean = {
-    if (gameState._1(r)(c) > '9' && gameState._1(r)(c) != ' ') {
+    if (gameState._1(r)(c) > 9 ) {
       return false
     } else if (gameState._1(r)(c) == value) return true
 
@@ -247,7 +247,98 @@ def sudokuController(gameState: GameState, input: String): Option[GameState] = {
         (gameState._1(r)(i) == value || gameState._1(r)(i) % 10 == value)) return false
 
     }
-    true
+    if (r < 3 && c < 3) {
+
+      for (i <- 0 to 2) {
+        for (j <- 0 to 2) {
+          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
+            return false
+        }
+      }
+      true
+    }
+    else if (r < 3 && c < 6) {
+
+      for (i <- 0 to 2) {
+        for (j <- 3 to 5) {
+          if ((i != r || j != c )&& gameState._1(i)(j)%10 == value)
+            return false
+        }
+      }
+      true
+    }
+    else if (r < 3 && c < 9) {
+
+      for (i <- 0 to 2) {
+        for (j <- 6 to 8) {
+          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
+            return false
+        }
+      }
+      true
+    }
+    else if (r < 6 && c < 3) {
+
+      for (i <- 3 to 5) {
+        for (j <- 0 to 2) {
+          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
+            return false
+        }
+      }
+      true
+    }
+    else if (r < 6 && c < 6) {
+
+      for (i <- 3 to 5) {
+        for (j <- 3 to 5) {
+          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
+            return false
+        }
+      }
+      true
+    }
+    else if (r < 6 && c < 9) {
+
+      for (i <- 3 to 5) {
+        for (j <- 6 to 8) {
+          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value) {
+            return false
+          }
+        }
+      }
+      true
+    }
+    else if (r < 9 && c < 3) {
+
+      for (i <- 6 to 8) {
+        for (j <- 0 to 2) {
+          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
+            return false
+        }
+      }
+      true
+    }
+    else if (r < 9 && c < 6) {
+
+      for (i <- 6 to 8) {
+        for (j <- 3 to 5) {
+          if ( (i != r || j != c ) && gameState._1(i)(j)%10 == value)
+            return false
+        }
+      }
+      true
+    }
+    else  {
+
+      for (i <- 6 to 8) {
+        for (j <- 6 to 8) {
+          if ( (i != r || j != c ) && gameState._1(i)(j)%10 == value)
+            return false
+        }
+      }
+      true
+    }
+//    true
   }
 
   def applyChange(gameState: GameState, r: Int, c: Int, value: Int): GameState = {
@@ -334,7 +425,7 @@ def eightQueensController(gameState: GameState, input: String): Option[GameState
   if (input.length == 2) {
     val row = input.charAt(0).toInt - 49
     val col = input.charAt(1).toInt - 97
-    if (row >= 0 && row < 3 && col >= 0 && col < 3 && validMove(gameState, row, col)) Some(applyMove(gameState, row, col)) else None
+    if (row >= 0 && row < 8 && col >= 0 && col < 8 && validMove(gameState, row, col)) Some(applyMove(gameState, row, col)) else None
   }
   else None
 }

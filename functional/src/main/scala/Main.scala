@@ -29,7 +29,7 @@ import scala.io.StdIn
                 game = StdIn.readLine("CHOOSE GAME :")
             }
         }
-
+  
         initialScreen()
 
 
