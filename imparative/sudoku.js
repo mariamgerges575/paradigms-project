@@ -114,14 +114,20 @@ export class sudoku extends Abstract_game_engine {
         }
            
         for (let i = 0; i < 9; i++) {
-                if ((state.board[Row][i] == value || state.board[Row][i]-10== value)|| 
-                state.board[i][Col] == value || state.board[i][Col]-10== value) {
+                if (state.board[Row][i]%10 == value || state.board[i][Col]%10== value) {
                     return null
                 }
+        }
+
+        var rDiv=Math.floor(Row/3)*3 
+        var cDiv=Math.floor(Col/3)*3
+        
+        for(var i=rDiv; i< rDiv+3 ;i++){
+            for(var j=cDiv; j< cDiv+3; j++){
+                if(state.board[i][j]%10===value) return null
             }
-            state.board[Row][Col] = value; 
-            return state
+        }
+        state.board[Row][Col] = value; 
+        return state
     }
 }
-// c=new sudoku();
-// c.Initialize();
