@@ -1,3 +1,4 @@
+import java.io.{File, PrintWriter}
 
 def chessController(gameState: GameState, input: String): Option[GameState] = {
   val whitePieces = Set('K', 'Q', 'R', 'X', 'N', 'P')
@@ -338,7 +339,7 @@ def sudokuController(gameState: GameState, input: String): Option[GameState] = {
       }
       true
     }
-//    true
+    //    true
   }
 
   def applyChange(gameState: GameState, r: Int, c: Int, value: Int): GameState = {
@@ -438,7 +439,58 @@ def switchPlayers(player: currentPlayer): currentPlayer = {
     case None => None
   }
 }
+def Solve8Queens(board: Board): Option[Board]= {
+  def write_to_file_8Queens(board: Board): Unit = {
+    val QueenPlaces = Array("_", "_", "_", "_", "_", "_", "_", "_")
+    for (j <- 0 until 8) {
+      for (i <- 0 until 8) {
+        if (board(i)(j) == '♕') {
+          QueenPlaces(j) = (i + 1).toString
+        }
+      }
+    }
+    val file = new File("eightQueens_PrologInput.txt")
+    val writer = new PrintWriter(file)
+    val fileInput = "[" + QueenPlaces.mkString(", ") + "]."
+    writer.write(fileInput)
+    writer.close()
+  }
 
+  def read_from_file_8Queens(): Option[Board] = {
+    import scala.io.Source
+    val filename = "eightQueens_PrologOutput.txt"
+    val lines = Source.fromFile(filename).getLines().toList
+    println(lines(0))
+    if (lines(0) == "false") {
+      None
+    }
+    else {
+      val arr = lines(0).stripPrefix("[").stripSuffix("]").split(",").map(_.toInt)
+      var newBoard: Board = Array.fill(8, 8)(' ')
+      for (j <- 0 until 8) {
+        newBoard(arr(j) - 1)(j) = '♕'
+      }
+      for (i <- 0 until 8) {
+        for (j <- 0 until 8) {
+          print(newBoard(i)(j).toChar + " ")
+        }
+        println("")
+      }
+      Some(newBoard)
+    }
+  }
+
+  def run_8QueensProlog(): Unit = {
+    import scala.sys.process._
+    val prologPath = "/opt/homebrew/bin/swipl" // kol wa7d y7ot el path bta3 el prolog interpreter bta3ohhh
+    val prologFile = "eightQueens_PrologSolver.pl"
+    val command = s"""$prologPath -q -t solve -s $prologFile"""
+    command.!!
+  }
+  write_to_file_8Queens(board)
+  run_8QueensProlog()
+  read_from_file_8Queens()
+}
 
 
 
