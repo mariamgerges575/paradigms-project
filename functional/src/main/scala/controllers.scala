@@ -237,114 +237,30 @@ def checkersController(gameState: GameState, input: String): Option[GameState] =
 }
 
 def sudokuController(gameState: GameState, input: String): Option[GameState] = {
-
   def isValidGame(gameState: GameState, r: Int, c: Int, value: Int): Boolean = {
     if (gameState._1(r)(c) > 9 ) {
       return false
     } else if (gameState._1(r)(c) == value) return true
 
     for (i <- 0 to 8) {
-      if ((gameState._1(i)(c) == value || gameState._1(i)(c) % 10 == value) ||
-        (gameState._1(r)(i) == value || gameState._1(r)(i) % 10 == value)) return false
-
+      if (gameState._1(i)(c) % 10 == value || gameState._1(r)(i) % 10 == value) return false
     }
-    if (r < 3 && c < 3) {
+    val rDiv:Int= (math.floor(r/3)*3).toInt
+    val cDiv:Int= (math.floor(c/3)*3).toInt
 
-      for (i <- 0 to 2) {
-        for (j <- 0 to 2) {
-          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
-            return false
-        }
+    for(i <- rDiv to rDiv+2){
+      for (j <- cDiv to cDiv+2) {
+        if(gameState._1(i)(j)%10 == value) return false
+
       }
-      true
     }
-    else if (r < 3 && c < 6) {
-
-      for (i <- 0 to 2) {
-        for (j <- 3 to 5) {
-          if ((i != r || j != c )&& gameState._1(i)(j)%10 == value)
-            return false
-        }
-      }
-      true
+    true
     }
-    else if (r < 3 && c < 9) {
-
-      for (i <- 0 to 2) {
-        for (j <- 6 to 8) {
-          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
-            return false
-        }
-      }
-      true
-    }
-    else if (r < 6 && c < 3) {
-
-      for (i <- 3 to 5) {
-        for (j <- 0 to 2) {
-          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
-            return false
-        }
-      }
-      true
-    }
-    else if (r < 6 && c < 6) {
-
-      for (i <- 3 to 5) {
-        for (j <- 3 to 5) {
-          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
-            return false
-        }
-      }
-      true
-    }
-    else if (r < 6 && c < 9) {
-
-      for (i <- 3 to 5) {
-        for (j <- 6 to 8) {
-          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value) {
-            return false
-          }
-        }
-      }
-      true
-    }
-    else if (r < 9 && c < 3) {
-
-      for (i <- 6 to 8) {
-        for (j <- 0 to 2) {
-          if ((i != r || j != c ) && gameState._1(i)(j)%10 == value)
-            return false
-        }
-      }
-      true
-    }
-    else if (r < 9 && c < 6) {
-
-      for (i <- 6 to 8) {
-        for (j <- 3 to 5) {
-          if ( (i != r || j != c ) && gameState._1(i)(j)%10 == value)
-            return false
-        }
-      }
-      true
-    }
-    else  {
-
-      for (i <- 6 to 8) {
-        for (j <- 6 to 8) {
-          if ( (i != r || j != c ) && gameState._1(i)(j)%10 == value)
-            return false
-        }
-      }
-      true
-    }
-    //    true
-  }
 
   def applyChange(gameState: GameState, r: Int, c: Int, value: Int): GameState = {
     val newState: GameState = (gameState._1.clone(), switchPlayers(gameState._2))
     if (gameState._1(r)(c) == value) newState._1(r)(c) = 0 else newState._1(r)(c) = value
+    write_to_file_sudoku(newState._1)
     newState
   }
 
@@ -449,7 +365,7 @@ def Solve8Queens(board: Board): Option[Board]= {
         }
       }
     }
-    val file = new File("eightQueens_PrologInput.txt")
+    val file = new File("eightQueens_PrologInput.txt");
     val writer = new PrintWriter(file)
     val fileInput = "[" + QueenPlaces.mkString(", ") + "]."
     writer.write(fileInput)
@@ -458,9 +374,9 @@ def Solve8Queens(board: Board): Option[Board]= {
 
   def read_from_file_8Queens(): Option[Board] = {
     import scala.io.Source
-    val filename = "eightQueens_PrologOutput.txt"
+    val filename = "eightQueens_PrologOutput.txt";
     val lines = Source.fromFile(filename).getLines().toList
-    println(lines(0))
+//    println(lines(0))
     if (lines(0) == "false") {
       None
     }
@@ -482,8 +398,8 @@ def Solve8Queens(board: Board): Option[Board]= {
 
   def run_8QueensProlog(): Unit = {
     import scala.sys.process._
-    val prologPath = "/opt/homebrew/bin/swipl" // kol wa7d y7ot el path bta3 el prolog interpreter bta3ohhh
-    val prologFile = "eightQueens_PrologSolver.pl"
+    val prologPath = "C:\\Program Files\\swipl\\bin\\swipl" // "/opt/homebrew/bin/swipl" // kol wa7d y7ot el path bta3 el prolog interpreter bta3ohhh
+    val prologFile = "eightQueens_PrologSolver.pl";
     val command = s"""$prologPath -q -t solve -s $prologFile"""
     command.!!
   }
@@ -492,7 +408,44 @@ def Solve8Queens(board: Board): Option[Board]= {
   read_from_file_8Queens()
 }
 
+def SolveSudoku(board: Board): Option[Board]= {
+  def read_from_file_sudoku(): Option[Board] = {
+    import scala.io.Source
+    val filename = "sudoku_output.txt";
+    val lines = Source.fromFile(filename).getLines().toList
+//    println(lines(0))
+    if (lines(0) == "false") {
+      None
+    }
+    else {
+      val x= lines(0).replace("[","").replace("]","")
+      val y=x.split(",")
+      var k=0
+      val newBoard:Board=board.clone()
+      for(i<- 0 to 8){
+        for(j<- 0 to 8){
+          if(newBoard(i)(j)>10)
+            newBoard(i)(j)=y(k).toInt+10
+          else
+            newBoard(i)(j)=y(k).toInt
+          k+=1
+        }
+      }
+      Some(newBoard)
+    }
+  }
 
+  def run_sudokuProlog(): Unit = {
+    import scala.sys.process._
+    val prologPath = "C:\\Program Files\\swipl\\bin\\swipl" // "/opt/homebrew/bin/swipl" // kol wa7d y7ot el path bta3 el prolog interpreter bta3ohhh
+    val prologFile = "sudoku_prologSolver.pl";
+    val command = s"""$prologPath -q -t solve -s $prologFile"""
+    command.!!
+  }
+  write_to_file_sudoku(board)
+  run_sudokuProlog()
+  read_from_file_sudoku()
+}
 
 
 

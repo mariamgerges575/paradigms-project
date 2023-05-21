@@ -15,7 +15,7 @@ solve :-
         safe_queens(Qs),
         findall(Qs, label(Qs), Solutions),
         once(label(Qs))
-    ->  write(Qs)
+    ->  write_solutions(Solutions)
     ;   write('false')
     ),
     % Close the file

@@ -1,4 +1,5 @@
 
+import java.io.{File, PrintWriter}
 import scala.collection.mutable.Set
 import scala.util.Random
 
@@ -12,6 +13,29 @@ import scala.util.Random
     Array(-1, 0,-1, 0,-1, 0,-1, 0),
     Array(0,-1, 0,-1, 0,-1, 0,-1)),Some(1))
 
+  def write_to_file_sudoku(board: Board): Unit = {
+    val file = new File("sudoku_input.txt");
+    val writer = new PrintWriter(file)
+    writer.write("[")
+    for (j <- 0 to 8) {
+      writer.write("[")
+      for (i <- 0 to 8) {
+        if (board(j)(i) == 0) {
+          writer.write("_")
+          if(i != 8) writer.write(",")
+
+        }
+        else{
+          writer.write((board(j)(i)%10).toString)
+          if(i!=8) writer.write(",")
+        }
+      }
+      writer.write("]")
+      if(j!=8) writer.write(",\n")
+    }
+  writer.write("].")
+  writer.close()
+}
   val initSudokuState:()=>(GameState)=()=>{
     def remove(a: Array[Array[Int]], count: Int) ={
       val rs = Random.shuffle(List.range(0, 81))
@@ -70,7 +94,8 @@ import scala.util.Random
     }
     val puzzle :Array[Array[Int]]=generate()
     // create a puzzle by remove a number of cells
-    remove(puzzle, 60);
+    remove(puzzle, 30);
+    write_to_file_sudoku(puzzle)
     for(i<-0 to 8) {
             for (j <- 0 to 8) {
               if(puzzle(i)(j)!=0) puzzle(i)(j)+=10
