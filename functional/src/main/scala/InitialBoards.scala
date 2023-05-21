@@ -94,7 +94,7 @@ import scala.util.Random
     }
     val puzzle :Array[Array[Int]]=generate()
     // create a puzzle by remove a number of cells
-    remove(puzzle, 30);
+    remove(puzzle, 60);
     write_to_file_sudoku(puzzle)
     for(i<-0 to 8) {
             for (j <- 0 to 8) {

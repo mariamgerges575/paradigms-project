@@ -1,4 +1,5 @@
 import java.io.{File, PrintWriter}
+import scala.util.Random
 
 def chessController(gameState: GameState, input: String): Option[GameState] = {
   val whitePieces = Set('K', 'Q', 'R', 'X', 'N', 'P')
@@ -381,17 +382,21 @@ def Solve8Queens(board: Board): Option[Board]= {
       None
     }
     else {
-      val arr = lines(0).stripPrefix("[").stripSuffix("]").split(",").map(_.toInt)
+      val random = new Random()
+      val randomInt = random.nextInt(lines.length)
+      //println("number of solutions ="+lines.length+" selected solution at line ="+randomInt)
+      val arr = lines(randomInt).stripPrefix("[").stripSuffix("]").split(",").map(_.toInt)
+
       var newBoard: Board = Array.fill(8, 8)(' ')
       for (j <- 0 until 8) {
         newBoard(arr(j) - 1)(j) = '♕'
       }
-      for (i <- 0 until 8) {
-        for (j <- 0 until 8) {
-          print(newBoard(i)(j).toChar + " ")
-        }
-        println("")
-      }
+//      for (i <- 0 until 8) {
+//        for (j <- 0 until 8) {
+//          print(newBoard(i)(j).toChar + " ")
+//        }
+//        println("")
+//      }
       Some(newBoard)
     }
   }
