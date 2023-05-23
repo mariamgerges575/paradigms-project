@@ -336,7 +336,9 @@ def eightQueensController(gameState: GameState, input: String): Option[GameState
   }
 
   def applyMove(gameState: GameState, row: Int, col: Int): GameState = {
-    gameState._1(row)(col) = if (gameState._1(row)(col) == ' ') '♕' else ' '
+    val newGameState=gameState._1.clone()
+    newGameState(row)(col) = if (gameState._1(row)(col) == ' ') '♕' else ' '
+    write_to_file_8Queens(newGameState)
     gameState
   }
 
@@ -356,23 +358,22 @@ def switchPlayers(player: currentPlayer): currentPlayer = {
     case None => None
   }
 }
-def Solve8Queens(board: Board): Option[Board]= {
-  def write_to_file_8Queens(board: Board): Unit = {
-    val QueenPlaces = Array("_", "_", "_", "_", "_", "_", "_", "_")
-    for (j <- 0 until 8) {
-      for (i <- 0 until 8) {
-        if (board(i)(j) == '♕') {
-          QueenPlaces(j) = (i + 1).toString
-        }
+def write_to_file_8Queens(board: Board): Unit = {
+  val QueenPlaces = Array("_", "_", "_", "_", "_", "_", "_", "_")
+  for (j <- 0 until 8) {
+    for (i <- 0 until 8) {
+      if (board(i)(j) == '♕') {
+        QueenPlaces(j) = (i + 1).toString
       }
     }
-    val file = new File("eightQueens_PrologInput.txt");
-    val writer = new PrintWriter(file)
-    val fileInput = "[" + QueenPlaces.mkString(", ") + "]."
-    writer.write(fileInput)
-    writer.close()
   }
-
+  val file = new File("eightQueens_PrologInput.txt");
+  val writer = new PrintWriter(file)
+  val fileInput = "[" + QueenPlaces.mkString(", ") + "]."
+  writer.write(fileInput)
+  writer.close()
+}
+def Solve8Queens(board: Board): Option[Board]= {
   def read_from_file_8Queens(): Option[Board] = {
     import scala.io.Source
     val filename = "eightQueens_PrologOutput.txt";

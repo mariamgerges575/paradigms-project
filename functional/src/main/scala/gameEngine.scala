@@ -38,7 +38,7 @@ def gameEngine(drawerfn: (GameState )=> Unit,initState:()=>(GameState),controlle
     override def actionPerformed(e: ActionEvent): Unit = {
 
       gameSolution(state._1) match
-        case Some(solution)=> drawerfn(solution,state._2)
+        case Some(solution)=> drawerfn(solution,state._2);
         case None=>JOptionPane.showMessageDialog(null, "No Possible Solution")
     }
   })
